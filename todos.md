@@ -1,5 +1,7 @@
 ## Future ToDos
 
+> *NOTE:* These are the future features as spec'ed out by Niko, they may change in the future
+
 ### Feature ToDos
 
 - [ ] Generate the following field types from a `config` object:
