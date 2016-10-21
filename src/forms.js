@@ -1,5 +1,6 @@
 (function(window, document, undefined){
 
+  var StringField = require('./fields/stringField.js');
   /**
    * Utility function to find the value of an attribute in a series of nested
    * objects using a string path.
@@ -26,7 +27,7 @@
   /**
    * The constructor for the AutomateForm object
    */
-  function AutomateForm(node) {
+  var AutomateForm = function(node) {
     var _self = this;
     _self.el = node;
     _self.name = node.getAttribute('automate-form');
@@ -53,7 +54,7 @@
     });
   }
 
-  AutomateForm.StringField = function(config) {
+  AutomateForm.prototype.addStringField = function(config) {
     var _self = this;
     // Create the div to wrap around both elements
     var wrapper = document.createElement('div');
@@ -123,4 +124,4 @@
   } else {
     document.addEventListener('DOMContentLoaded', onDocumentReady);
   }
-})(this, this.document);
+})(window, window.document);

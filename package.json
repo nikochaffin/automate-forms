@@ -1,0 +1,28 @@
+{
+  "name": "automate-forms",
+  "version": "1.0.0",
+  "description": "A solution for simpler forms with [Bixly Automate](https://bixly.com/automate).",
+  "main": "bundle.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "webpack": "^1.13.2",
+    "webpack-stream": "^3.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikochaffin/automate-forms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikochaffin/automate-forms/issues"
+  },
+  "homepage": "https://github.com/nikochaffin/automate-forms#readme"
+}
