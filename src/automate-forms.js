@@ -33,41 +33,6 @@
 
     // TODO: need to throw an error here if the form does not have a name
 
-    _self.addStringField = function(config) {
-      // Create the div to wrap around both elements
-      var wrapper = document.createElement('div');
-      var inputName = _self.name + "." + config.key;
-
-      // Create the label element
-      if (config.label !== false) {
-        var label = document.createElement('label');
-        label.setAttribute('for', inputName);
-        label.innerText = config.label || config.key;
-        wrapper.appendChild(label);
-      }
-
-      // Create the input element
-      var input = document.createElement('input');
-      input.setAttribute('type', 'text');
-      input.setAttribute('name', inputName);
-      input.setAttribute('id', inputName);
-      input.setAttribute('placeholder', config.placeholder || '');
-      wrapper.appendChild(input);
-
-      // Append the input and label elements
-      _self.el.appendChild(wrapper);
-    }
-
-    _self.addField = function(config) {
-      switch (config.type) {
-        case "string":
-          _self.addStringField(config);
-          break;
-        default:
-
-      }
-    }
-
     // TODO: This is just an example field, remove in implementation
     _self.addField({
       type: 'string',
@@ -86,6 +51,43 @@
       key: 'no_label',
       label: false,
     });
+  }
+
+  AutomateForm.StringField = function(config) {
+    var _self = this;
+    // Create the div to wrap around both elements
+    var wrapper = document.createElement('div');
+    var inputName = _self.name + "." + config.key;
+
+    // Create the label element
+    if (config.label !== false) {
+      var label = document.createElement('label');
+      label.setAttribute('for', inputName);
+      label.innerText = config.label || config.key;
+      wrapper.appendChild(label);
+    }
+
+    // Create the input element
+    var input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('name', inputName);
+    input.setAttribute('id', inputName);
+    input.setAttribute('placeholder', config.placeholder || '');
+    wrapper.appendChild(input);
+
+    // Append the input and label elements
+    _self.el.appendChild(wrapper);
+  }
+
+  AutomateForm.prototype.addField = function(config) {
+    var _self = this;
+    switch (config.type) {
+      case "string":
+        _self.addStringField(config);
+        break;
+      default:
+        console.warn("Uknown field type");
+    }
   }
 
   /**
