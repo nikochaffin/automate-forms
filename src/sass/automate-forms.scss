@@ -1,0 +1,43 @@
+$grey-light: #bbb;
+$primary-color: #311B92;
+
+.af-field-wrapper {
+  position: relative;
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -1px;
+    border-bottom: 2px solid $primary-color;
+    width: 100%;
+    opacity: 0;
+    transform: scale(0.001, 1);
+    transition: transform 0.15s ease, opacity 0s 0.15s;
+  }
+
+  &.af-field-focused:after {
+    opacity: 1;
+    transform: scale(1, 1);
+    transition: transform 0.15s ease;
+  }
+}
+
+.af-field {
+  position: relative;
+  margin-bottom: 10px;
+  display: block;
+  width: 100%;
+  font-size: 1em;
+  border: none;
+  border-bottom: 1px solid $grey-light;
+  line-height: 1.8;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.af-label {
+  display: block;
+}

@@ -44,9 +44,18 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// require('./lib/classListPolyfill');
+	__webpack_require__(1);
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
 	(function(window, document, undefined){
 
-	  var StringField = __webpack_require__(1);
+	  var _s = __webpack_require__(2);
+	  var StringField = __webpack_require__(3);
 	  /**
 	   * Utility function to find the value of an attribute in a series of nested
 	   * objects using a string path.
@@ -104,23 +113,22 @@
 	    var _self = this;
 	    // Create the div to wrap around both elements
 	    var wrapper = document.createElement('div');
-	    var inputName = _self.name + "." + config.key;
+	    wrapper.classList.add(_s.prefixClass('field-wrapper'));
+	    config.inputName = _self.name + "." + config.key;
 
 	    // Create the label element
 	    if (config.label !== false) {
 	      var label = document.createElement('label');
-	      label.setAttribute('for', inputName);
+	      label.setAttribute('for', config.inputName || config.key);
 	      label.innerText = config.label || config.key;
+	      label.classList.add(_s.prefixClass('label'));
 	      wrapper.appendChild(label);
 	    }
 
 	    // Create the input element
-	    var input = document.createElement('input');
-	    input.setAttribute('type', 'text');
-	    input.setAttribute('name', inputName);
-	    input.setAttribute('id', inputName);
-	    input.setAttribute('placeholder', config.placeholder || '');
-	    wrapper.appendChild(input);
+	    var input = new StringField(config);
+	    input.wrapperEl = wrapper;
+	    wrapper.appendChild(input.el);
 
 	    // Append the input and label elements
 	    _self.el.appendChild(wrapper);
@@ -174,13 +182,78 @@
 
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports) {
 
-	var StringField = function(config) {
+	var settings = {};
+
+	settings.cssClassPrefix = "af-";
+	settings.prefixClass = function(className) {
+	  return settings.cssClassPrefix + className;
 	}
 
+	module.exports = settings;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var Field = __webpack_require__(4);
+
+	var StringField = function(config) {
+	  var _self = this;
+	  Field.call(_self, config);
+	  _self.el.setAttribute('type', 'text');
+	  _self.el.classList.add(_s.prefixClass('field--string'));
+	}
+
+	StringField.prototype = Object.create(Field.prototype);
+	StringField.prototype.constructor = StringField;
+
 	module.exports = StringField;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+
+	var Field = function(config) {
+	  var _self = this;
+	  var elTag = config.elementTag || 'input';
+	  _self.name = config.key;
+	  var inputName = config.inputName || config.key;
+	  var el = document.createElement(elTag);
+	  el.setAttribute('name', inputName);
+	  el.setAttribute('id', inputName);
+	  el.setAttribute('placeholder', config.placeholder || '');
+	  el.classList.add(_s.prefixClass('field'));
+
+	  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
+	  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
+	  _self.el = el;
+	}
+
+	Field.prototype._onFieldFocus = function(e) {
+	  var _self = this;
+	  if (_self.wrapperEl) {
+	    _self.wrapperEl.classList.add(_s.prefixClass('field-focused'));
+	  }
+	  console.log(_self.name, "focused");
+	}
+
+	Field.prototype._onFieldBlur = function(e) {
+	  var _self = this;
+	  if (_self.wrapperEl) {
+	    _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
+	  }
+	  console.log(_self.name, "blurred");
+	}
+
+	module.exports = Field;
 
 
 /***/ }

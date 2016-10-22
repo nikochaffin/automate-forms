@@ -1,5 +1,6 @@
 (function(window, document, undefined){
 
+  var _s = require('./settings.js');
   var StringField = require('./fields/stringField.js');
   /**
    * Utility function to find the value of an attribute in a series of nested
@@ -58,23 +59,22 @@
     var _self = this;
     // Create the div to wrap around both elements
     var wrapper = document.createElement('div');
-    var inputName = _self.name + "." + config.key;
+    wrapper.classList.add(_s.prefixClass('field-wrapper'));
+    config.inputName = _self.name + "." + config.key;
 
     // Create the label element
     if (config.label !== false) {
       var label = document.createElement('label');
-      label.setAttribute('for', inputName);
+      label.setAttribute('for', config.inputName || config.key);
       label.innerText = config.label || config.key;
+      label.classList.add(_s.prefixClass('label'));
       wrapper.appendChild(label);
     }
 
     // Create the input element
-    var input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    input.setAttribute('name', inputName);
-    input.setAttribute('id', inputName);
-    input.setAttribute('placeholder', config.placeholder || '');
-    wrapper.appendChild(input);
+    var input = new StringField(config);
+    input.wrapperEl = wrapper;
+    wrapper.appendChild(input.el);
 
     // Append the input and label elements
     _self.el.appendChild(wrapper);
