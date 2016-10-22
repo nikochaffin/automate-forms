@@ -25,4 +25,4 @@
 ### Development ToDos
 
 - [ ] Documentation generation
-- [ ] Babel + Uglify for splitting sources
+- [x] Babel + Uglify for splitting sources
