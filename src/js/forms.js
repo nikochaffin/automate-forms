@@ -53,31 +53,24 @@
       key: 'no_label',
       label: false,
     });
+
+    _self.addField({
+      type: 'string',
+      key: 'disabled_input',
+      label: false,
+      disabled: true,
+      placeholder: 'Disabled'
+    });
   }
 
   AutomateForm.prototype.addStringField = function(config) {
     var _self = this;
-    // Create the div to wrap around both elements
-    var wrapper = document.createElement('div');
-    wrapper.classList.add(_s.prefixClass('field-wrapper'));
-    config.inputName = _self.name + "." + config.key;
-
-    // Create the label element
-    if (config.label !== false) {
-      var label = document.createElement('label');
-      label.setAttribute('for', config.inputName || config.key);
-      label.innerText = config.label || config.key;
-      label.classList.add(_s.prefixClass('label'));
-      wrapper.appendChild(label);
-    }
 
     // Create the input element
     var input = new StringField(config);
-    input.wrapperEl = wrapper;
-    wrapper.appendChild(input.el);
 
     // Append the input and label elements
-    _self.el.appendChild(wrapper);
+    _self.el.appendChild(input.wrapperEl);
   }
 
   AutomateForm.prototype.addField = function(config) {

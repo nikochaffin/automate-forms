@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A solution for simpler forms with [Bixly Automate](https://bixly.com/automate).",
   "main": "bundle.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "browser-sync": "^2.17.5",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
     "gulp-clean-css": "^2.0.13",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",

@@ -5,6 +5,7 @@ var webpack = require('webpack-stream');
 var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
+var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync').create();
 
 gulp.task('bundle-js', function() {
@@ -24,6 +25,7 @@ gulp.task('bundle-js', function() {
 gulp.task('compile-sass', function() {
   return gulp.src('src/sass/automate-forms.scss')
     .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer({ browsers: 'last 2 versions' }))
     .pipe(rename('automate-forms.css'))
     .pipe(gulp.dest('.'))
     .pipe(browserSync.stream())

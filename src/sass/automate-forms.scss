@@ -1,27 +1,6 @@
-$grey-light: #bbb;
+$grey-light: #ccc;
+$grey-medium: #737373;
 $primary-color: #311B92;
-
-.af-field-wrapper {
-  position: relative;
-
-  &:after {
-    content: "";
-    display: block;
-    position: absolute;
-    bottom: -1px;
-    border-bottom: 2px solid $primary-color;
-    width: 100%;
-    opacity: 0;
-    transform: scale(0.001, 1);
-    transition: transform 0.15s ease, opacity 0s 0.15s;
-  }
-
-  &.af-field-focused:after {
-    opacity: 1;
-    transform: scale(1, 1);
-    transition: transform 0.15s ease;
-  }
-}
 
 .af-field {
   position: relative;
@@ -30,14 +9,77 @@ $primary-color: #311B92;
   width: 100%;
   font-size: 1em;
   border: none;
-  border-bottom: 1px solid $grey-light;
+  border-bottom: 1px solid $grey-medium;
   line-height: 1.8;
 
   &:focus {
     outline: none;
   }
+
+  &[disabled] {
+    border-bottom: 1px dashed $grey-light;
+
+    &::placeholder {
+      color: $grey-light;
+    }
+
+    & + .af-label {
+      color: $grey-light;
+    }
+  }
+
+  &::placeholder {
+    color: $grey-medium;
+  }
 }
 
 .af-label {
   display: block;
+  position: absolute;
+  font-size: 1em;
+  line-height: 1.8;
+  color: $grey-medium;
+  top: 1.35em;
+  margin-top: 2px;
+  left: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: text;
+  transform-origin: top left;
+  transform: translate(0,0);
+  transition: transform 0.2s ease;
+}
+
+.af-field-wrapper {
+  position: relative;
+  padding-top: 1.35em;
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: -2px;
+    border-bottom: 2px solid $primary-color;
+    opacity: 0;
+    transform: scale(0.001, 1);
+    transition: none;
+  }
+
+  &.af-field-focused:after {
+    opacity: 1;
+    transform: scale(1, 1);
+    transition: transform 0.2s ease;
+  }
+
+  &.af-field-has-content,
+  &.af-field-has-placeholder {
+    .af-label {
+      transform: translate(0, -1em) scale(0.75);
+      color: $primary-color;
+      cursor: default;
+    }
+  }
 }

@@ -107,31 +107,24 @@
 	      key: 'no_label',
 	      label: false,
 	    });
+
+	    _self.addField({
+	      type: 'string',
+	      key: 'disabled_input',
+	      label: false,
+	      disabled: true,
+	      placeholder: 'Disabled'
+	    });
 	  }
 
 	  AutomateForm.prototype.addStringField = function(config) {
 	    var _self = this;
-	    // Create the div to wrap around both elements
-	    var wrapper = document.createElement('div');
-	    wrapper.classList.add(_s.prefixClass('field-wrapper'));
-	    config.inputName = _self.name + "." + config.key;
-
-	    // Create the label element
-	    if (config.label !== false) {
-	      var label = document.createElement('label');
-	      label.setAttribute('for', config.inputName || config.key);
-	      label.innerText = config.label || config.key;
-	      label.classList.add(_s.prefixClass('label'));
-	      wrapper.appendChild(label);
-	    }
 
 	    // Create the input element
 	    var input = new StringField(config);
-	    input.wrapperEl = wrapper;
-	    wrapper.appendChild(input.el);
 
 	    // Append the input and label elements
-	    _self.el.appendChild(wrapper);
+	    _self.el.appendChild(input.wrapperEl);
 	  }
 
 	  AutomateForm.prototype.addField = function(config) {
@@ -223,18 +216,43 @@
 
 	var Field = function(config) {
 	  var _self = this;
+
+	  // Create the div to wrap around both elements
+	  var wrapper = document.createElement('div');
+	  wrapper.classList.add(_s.prefixClass('field-wrapper'));
+
 	  var elTag = config.elementTag || 'input';
 	  _self.name = config.key;
 	  var inputName = config.inputName || config.key;
 	  var el = document.createElement(elTag);
 	  el.setAttribute('name', inputName);
 	  el.setAttribute('id', inputName);
-	  el.setAttribute('placeholder', config.placeholder || '');
+	  if (config.placeholder) {
+	    el.setAttribute('placeholder', config.placeholder || '');
+	    wrapper.classList.add(_s.prefixClass('field-has-placeholder'));
+	  }
+	  if (config.disabled) {
+	    el.setAttribute('disabled', '');
+	  }
 	  el.classList.add(_s.prefixClass('field'));
 
 	  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
 	  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
+	  el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
+
 	  _self.el = el;
+
+	  _self.wrapperEl = wrapper;
+	  wrapper.appendChild(_self.el);
+
+	  // Create the label element
+	  if (config.label !== false) {
+	    var label = document.createElement('label');
+	    label.setAttribute('for', config.inputName || config.key);
+	    label.innerText = config.label || config.key;
+	    label.classList.add(_s.prefixClass('label'));
+	    wrapper.appendChild(label);
+	  }
 	}
 
 	Field.prototype._onFieldFocus = function(e) {
@@ -251,6 +269,19 @@
 	    _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
 	  }
 	  console.log(_self.name, "blurred");
+	}
+
+	Field.prototype._onFieldInput = function(e) {
+	  var _self = this;
+	  _self.value = _self.el.value;
+	  if (_self.wrapperEl) {
+	    if (_self.value !== "") {
+	      _self.wrapperEl.classList.add(_s.prefixClass('field-has-content'));
+	    } else {
+	      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
+	    }
+	  }
+	  console.log(_self.name, "input");
 	}
 
 	module.exports = Field;
