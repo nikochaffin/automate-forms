@@ -46,7 +46,7 @@ Field.prototype._onFieldFocus = function(e) {
   if (_self.wrapperEl) {
     _self.wrapperEl.classList.add(_s.prefixClass('field-focused'));
   }
-  console.log(_self.name, "focused");
+  // console.log(_self.name, "focused");
 }
 
 Field.prototype._onFieldBlur = function(e) {
@@ -54,7 +54,7 @@ Field.prototype._onFieldBlur = function(e) {
   if (_self.wrapperEl) {
     _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
   }
-  console.log(_self.name, "blurred");
+  // console.log(_self.name, "blurred");
 }
 
 Field.prototype._onFieldInput = function(e) {
@@ -67,7 +67,7 @@ Field.prototype._onFieldInput = function(e) {
       _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
     }
   }
-  console.log(_self.name, "input");
+  // console.log(_self.name, "input");
 }
 
 module.exports = Field;

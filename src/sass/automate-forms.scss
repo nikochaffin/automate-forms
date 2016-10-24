@@ -1,5 +1,6 @@
 $grey-light: #ccc;
 $grey-medium: #737373;
+$grey-dark: #212121;
 $primary-color: #311B92;
 
 .af-field {
@@ -11,6 +12,7 @@ $primary-color: #311B92;
   border: none;
   border-bottom: 1px solid $grey-medium;
   line-height: 1.8;
+  color: $grey-dark;
 
   &:focus {
     outline: none;
@@ -68,17 +70,23 @@ $primary-color: #311B92;
     transition: none;
   }
 
-  &.af-field-focused:after {
-    opacity: 1;
-    transform: scale(1, 1);
-    transition: transform 0.2s ease;
+  &.af-field-focused {
+    &.af-field-has-content .af-label,
+    &.af-field-has-placeholder .af-label {
+      color: $primary-color;
+    }
+
+    &:after {
+      opacity: 1;
+      transform: scale(1, 1);
+      transition: transform 0.2s ease;
+    }
   }
 
   &.af-field-has-content,
   &.af-field-has-placeholder {
     .af-label {
       transform: translate(0, -1em) scale(0.75);
-      color: $primary-color;
       cursor: default;
     }
   }
