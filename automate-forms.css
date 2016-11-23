@@ -58,13 +58,13 @@
     bottom: -1px;
     left: 0;
     right: -2px;
-    border-bottom: 2px solid #311B92;
+    border-bottom: 2px solid #3f51b5;
     opacity: 0;
     transform: scale(0.001, 1);
     transition: none; }
   .af-field-wrapper.af-field-focused.af-field-has-content .af-label,
   .af-field-wrapper.af-field-focused.af-field-has-placeholder .af-label {
-    color: #311B92; }
+    color: #3f51b5; }
   .af-field-wrapper.af-field-focused:after {
     opacity: 1;
     transform: scale(1, 1);

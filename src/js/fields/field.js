@@ -20,6 +20,10 @@ var Field = function(config) {
   if (config.disabled) {
     el.setAttribute('disabled', '');
   }
+  if (config.val) {
+    el.setAttribute('value', config.val);
+    wrapper.classList.add(_s.prefixClass('field-has-content'));
+  }
   el.classList.add(_s.prefixClass('field'));
 
   el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });

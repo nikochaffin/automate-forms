@@ -2,28 +2,7 @@
 
   var _s = require('./settings.js');
   var StringField = require('./fields/stringField.js');
-  /**
-   * Utility function to find the value of an attribute in a series of nested
-   * objects using a string path.
-   * Inspired by http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-   */
-  function deepFind(obj, path) {
-    // convert indexes to properties
-    path = path.replace(/\[(\w+)\]/g, '.$1');
-    // strip a leading dot
-    path = path.replace(/^\./, '');
-    // Split the path into an array of keys and indexes
-    var arr = path.split('.');
-    for (var i = 0, n = arr.length; i < n; ++i) {
-        var key = arr[i];
-        if (key in obj) {
-            obj = obj[key];
-        } else {
-            return;
-        }
-    }
-    return obj;
-  }
+  var ajax = require('./utilities/ajaxCall');
 
   /**
    * The constructor for the AutomateForm object
@@ -33,34 +12,70 @@
     _self.el = node;
     _self.name = node.getAttribute('automate-form');
 
+    _self.getFormRequest = ajax({
+      url: 'https://formtesting.nebrios.com/api/v1/forms/get_form'
+    }).success(function(form) {
+      if (form.fields && form.fields.length > 0) {
+        for (var i = 0; i < form.fields.length; i++) {
+          _self.addField(form.fields[i]);
+        }
+
+        var submitButton = document.createElement('button');
+        submitButton.setAttribute('type', 'submit');
+        submitButton.innerText = "Submit";
+        _self.el.appendChild(submitButton);
+      }
+    });
+
+    _self.el.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var formData = new FormData(_self.el);
+      _self.sumbitFormRequest = ajax({
+        method: "POST",
+        url: 'https://formtesting.nebrios.com/api/v1/forms/post_form',
+        // url: 'https://httpbin.org/post',
+        data: formData,
+        // headers: {
+        //   'Content-Type': 'application/x-www-form-urlencoded'
+        // }
+      }).success(function(data) {
+        console.log(data);
+      })
+    });
+
     // TODO: need to throw an error here if the form does not have a name
 
     // TODO: This is just an example field, remove in implementation
-    _self.addField({
-      type: 'string',
-      key: 'fooBar',
-      placeholder: 'Optional Foo'
-    });
+    // _self.addField({
+    //   type: 'string',
+    //   key: 'fooBar',
+    //   placeholder: 'Optional Foo'
+    // });
+    //
+    // _self.addField({
+    //   type: 'string',
+    //   key: 'bar_and_stuff',
+    //   label: 'Special FooBar',
+    // });
+    //
+    // _self.addField({
+    //   type: 'string',
+    //   key: 'no_label',
+    //   label: false,
+    // });
+    //
+    // _self.addField({
+    //   type: 'string',
+    //   key: 'disabled_input',
+    //   label: false,
+    //   disabled: true,
+    //   placeholder: 'Disabled'
+    // });
 
-    _self.addField({
-      type: 'string',
-      key: 'bar_and_stuff',
-      label: 'Special FooBar',
-    });
-
-    _self.addField({
-      type: 'string',
-      key: 'no_label',
-      label: false,
-    });
-
-    _self.addField({
-      type: 'string',
-      key: 'disabled_input',
-      label: false,
-      disabled: true,
-      placeholder: 'Disabled'
-    });
+    // var submitButton = document.createElement('button');
+    // submitButton.setAttribute('type', 'submit');
+    // submitButton.innerText = "Submit";
+    // _self.el.appendChild(submitButton);
   }
 
   AutomateForm.prototype.addStringField = function(config) {

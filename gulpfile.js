@@ -51,3 +51,5 @@ gulp.task('serve', ['watch'], function() {
   // gulp.watch(['./automate-forms.css', './automate-forms.min.css']).on('change', browserSync.stream);
   gulp.watch('./*.js').on('change', browserSync.reload);
 });
+
+gulp.task('default', ['serve']);
