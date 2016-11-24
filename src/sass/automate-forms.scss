@@ -1,6 +1,7 @@
 $grey-light: #ccc;
 $grey-medium: #737373;
 $grey-dark: #212121;
+$green: #55C68C;
 $primary-color: #3f51b5;
 
 .af-field {
@@ -89,5 +90,93 @@ $primary-color: #3f51b5;
       transform: translate(0, -1em) scale(0.75);
       cursor: default;
     }
+  }
+}
+
+.af-button {
+  border: none;
+  font-size: 1em;
+  line-height: 1.5;
+  height: 2.5em;
+  font-family: inherit;
+  margin-top: 1em;
+  padding: 0.5em 1.25em;
+  border-radius: 0.2em;
+  cursor: pointer;
+  position: relative;
+
+  .af-spinner {
+    display: none;
+  }
+
+  &.af-submit-button {
+    color: white;
+    background-color: $green;
+
+    .af-spinner {
+      color: $green;
+    }
+
+    &:hover {
+      background-color: lighten($green, 10);
+
+      .af-spinner {
+        color: lighten($green, 10);
+      }
+    }
+
+    &[disabled] {
+      background-color: desaturate($green, 20);
+
+      .af-spinner {
+        display: block;
+        color: desaturate($green, 20);
+      }
+
+      .af-button-text {
+        opacity: 0;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.af-spinner {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  animation: spin 1s infinite linear;
+
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+  }
+
+  &:before {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px white;
+  }
+
+  &:after {
+    width: 100%;
+    height: 6px;
+    margin-top: 7px;
+    background: currentcolor;
   }
 }

@@ -64,36 +64,45 @@
 	  var AutomateForm = function(node) {
 	    var _self = this;
 	    _self.el = node;
-	    _self.name = node.getAttribute('automate-form');
+	    _self.name = node.getAttribute('automate-form').split('.');
+	    _self.instance = _self.name[0];
+	    _self.name = _self.name[1];
 
 	    _self.getFormRequest = ajax({
-	      url: 'https://formtesting.nebrios.com/api/v1/forms/get_form'
+	      url: _self.getUrlBase() + '/api/v1/forms/get_form?form_name=' + _self.name,
 	    }).success(function(form) {
+	      // console.log(form);
 	      if (form.fields && form.fields.length > 0) {
 	        for (var i = 0; i < form.fields.length; i++) {
 	          _self.addField(form.fields[i]);
 	        }
 
-	        var submitButton = document.createElement('button');
-	        submitButton.setAttribute('type', 'submit');
-	        submitButton.innerText = "Submit";
-	        _self.el.appendChild(submitButton);
+	        _self.submitEl = document.createElement('button');
+	        _self.submitEl.setAttribute('type', 'submit');
+	        _self.submitEl.classList.add(_s.prefixClass('button'));
+	        _self.submitEl.classList.add(_s.prefixClass('submit-button'));
+	        var text = document.createElement('span');
+	        text.classList.add(_s.prefixClass('button-text'));
+	        text.innerText = "Submit";
+	        _self.submitEl.appendChild(text);
+	        var spinner = document.createElement('span');
+	        spinner.classList.add(_s.prefixClass('spinner'));
+	        _self.submitEl.appendChild(spinner);
+	        _self.el.appendChild(_self.submitEl);
 	      }
 	    });
 
 	    _self.el.addEventListener('submit', function(e) {
 	      e.preventDefault();
+	      _self.submitEl.setAttribute('disabled', '');
 	      var formData = new FormData(_self.el);
 	      _self.sumbitFormRequest = ajax({
 	        method: "POST",
-	        url: 'https://formtesting.nebrios.com/api/v1/forms/post_form',
-	        // url: 'https://httpbin.org/post',
+	        url: _self.getPostUrl(),
 	        data: formData,
-	        // headers: {
-	        //   'Content-Type': 'application/x-www-form-urlencoded'
-	        // }
 	      }).success(function(data) {
 	        console.log(data);
+	        _self.submitEl.removeAttribute('disabled');
 	      })
 	    });
 
@@ -130,6 +139,14 @@
 	    // submitButton.setAttribute('type', 'submit');
 	    // submitButton.innerText = "Submit";
 	    // _self.el.appendChild(submitButton);
+	  }
+
+	  AutomateForm.prototype.getUrlBase = function() {
+	    return "https://" + this.instance + ".nebrios.com";
+	  }
+
+	  AutomateForm.prototype.getPostUrl = function() {
+	    return this.getUrlBase() + "/api/v1/forms/post_form";
 	  }
 
 	  AutomateForm.prototype.addStringField = function(config) {
