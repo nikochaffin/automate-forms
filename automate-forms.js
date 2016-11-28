@@ -57,7 +57,8 @@
 	  var _s = __webpack_require__(2);
 	  var StringField = __webpack_require__(3);
 	  var IntegerField = __webpack_require__(5);
-	  var ajax = __webpack_require__(6);
+	  var DecimalField = __webpack_require__(6);
+	  var ajax = __webpack_require__(7);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -170,6 +171,16 @@
 	    _self.el.appendChild(input.wrapperEl);
 	  }
 
+	  AutomateForm.prototype.addDecimalField = function(config) {
+	    var _self = this;
+
+	    // Create the input element
+	    var input = new DecimalField(config);
+
+	    // Append the input and label elements
+	    _self.el.appendChild(input.wrapperEl);
+	  }
+
 	  AutomateForm.prototype.addField = function(config) {
 	    var _self = this;
 	    switch (config.type) {
@@ -178,6 +189,9 @@
 	        break;
 	      case "integer":
 	        _self.addIntegerField(config);
+	        break;
+	      case "decimal":
+	        _self.addDecimalField(config);
 	        break;
 	      default:
 	        console.warn("Uknown field type");
@@ -393,6 +407,27 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var Field = __webpack_require__(4);
+
+	var DecimalField = function(config) {
+	  var _self = this;
+	  Field.call(_self, config);
+	  _self.el.setAttribute('type', 'number');
+	  _self.el.classList.add(_s.prefixClass('field--integer'));
+	  _self.setValidCharacters(/\d/);
+	}
+
+	DecimalField.prototype = Object.create(Field.prototype);
+	DecimalField.prototype.constructor = DecimalField;
+
+	module.exports = DecimalField;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {
