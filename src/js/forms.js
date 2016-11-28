@@ -2,6 +2,7 @@
 
   var _s = require('./settings.js');
   var StringField = require('./fields/stringField.js');
+  var IntegerField = require('./fields/integerField.js');
   var ajax = require('./utilities/ajaxCall');
 
   /**
@@ -105,11 +106,24 @@
     _self.el.appendChild(input.wrapperEl);
   }
 
+  AutomateForm.prototype.addIntegerField = function(config) {
+    var _self = this;
+
+    // Create the input element
+    var input = new IntegerField(config);
+
+    // Append the input and label elements
+    _self.el.appendChild(input.wrapperEl);
+  }
+
   AutomateForm.prototype.addField = function(config) {
     var _self = this;
     switch (config.type) {
       case "string":
         _self.addStringField(config);
+        break;
+      case "integer":
+        _self.addIntegerField(config);
         break;
       default:
         console.warn("Uknown field type");

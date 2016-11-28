@@ -29,6 +29,7 @@ var Field = function(config) {
   el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
   el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
   el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
+  el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
 
   _self.el = el;
 
@@ -45,6 +46,11 @@ var Field = function(config) {
   }
 }
 
+Field.prototype.setValidCharacters = function(valid) {
+  var _self = this;
+  _self._validCharacters = new RegExp(valid, 'g');
+}
+
 Field.prototype._onFieldFocus = function(e) {
   var _self = this;
   if (_self.wrapperEl) {
@@ -59,6 +65,33 @@ Field.prototype._onFieldBlur = function(e) {
     _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
   }
   // console.log(_self.name, "blurred");
+}
+
+Field.prototype._isValidCharacter = function(char) {
+  var _self = this;
+  if (_self._validCharacters) {
+    return !!char.match(_self._validCharacters);
+  } else {
+    return true;
+  }
+}
+
+Field.prototype._removeInvalidCharacters = function(str) {
+  var _self = this;
+  if (_self._validCharacters) {
+    return str.match(_self._validCharacters).join("");
+  }
+  return str;
+}
+
+Field.prototype._onKeyDown = function(e) {
+  var _self = this;
+  console.log(e.key, e.keyCode);
+  if (_self._validCharacters) {
+    if (e.key.length == 1 && !_self._isValidCharacter(e.key)) {
+      e.preventDefault();
+    }
+  }
 }
 
 Field.prototype._onFieldInput = function(e) {

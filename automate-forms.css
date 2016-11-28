@@ -7,7 +7,8 @@
   border: none;
   border-bottom: 1px solid #737373;
   line-height: 1.8;
-  color: #212121; }
+  color: #212121;
+  -moz-appearance: textfield; }
   .af-field:focus {
     outline: none; }
   .af-field[disabled] {
@@ -30,6 +31,8 @@
     color: #737373; }
   .af-field::placeholder {
     color: #737373; }
+  .af-field::-webkit-outer-spin-button, .af-field::-webkit-inner-spin-button {
+    -webkit-appearance: none; }
 
 .af-label {
   display: block;

@@ -15,6 +15,8 @@ $primary-color: #3f51b5;
   line-height: 1.8;
   color: $grey-dark;
 
+  -moz-appearance: textfield;
+
   &:focus {
     outline: none;
   }
@@ -33,6 +35,11 @@ $primary-color: #3f51b5;
 
   &::placeholder {
     color: $grey-medium;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
 }
 

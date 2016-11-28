@@ -56,7 +56,8 @@
 
 	  var _s = __webpack_require__(2);
 	  var StringField = __webpack_require__(3);
-	  var ajax = __webpack_require__(5);
+	  var IntegerField = __webpack_require__(5);
+	  var ajax = __webpack_require__(6);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -159,11 +160,24 @@
 	    _self.el.appendChild(input.wrapperEl);
 	  }
 
+	  AutomateForm.prototype.addIntegerField = function(config) {
+	    var _self = this;
+
+	    // Create the input element
+	    var input = new IntegerField(config);
+
+	    // Append the input and label elements
+	    _self.el.appendChild(input.wrapperEl);
+	  }
+
 	  AutomateForm.prototype.addField = function(config) {
 	    var _self = this;
 	    switch (config.type) {
 	      case "string":
 	        _self.addStringField(config);
+	        break;
+	      case "integer":
+	        _self.addIntegerField(config);
 	        break;
 	      default:
 	        console.warn("Uknown field type");
@@ -275,6 +289,7 @@
 	  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
 	  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
 	  el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
+	  el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
 
 	  _self.el = el;
 
@@ -291,6 +306,11 @@
 	  }
 	}
 
+	Field.prototype.setValidCharacters = function(valid) {
+	  var _self = this;
+	  _self._validCharacters = new RegExp(valid, 'g');
+	}
+
 	Field.prototype._onFieldFocus = function(e) {
 	  var _self = this;
 	  if (_self.wrapperEl) {
@@ -305,6 +325,33 @@
 	    _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
 	  }
 	  // console.log(_self.name, "blurred");
+	}
+
+	Field.prototype._isValidCharacter = function(char) {
+	  var _self = this;
+	  if (_self._validCharacters) {
+	    return !!char.match(_self._validCharacters);
+	  } else {
+	    return true;
+	  }
+	}
+
+	Field.prototype._removeInvalidCharacters = function(str) {
+	  var _self = this;
+	  if (_self._validCharacters) {
+	    return str.match(_self._validCharacters).join("");
+	  }
+	  return str;
+	}
+
+	Field.prototype._onKeyDown = function(e) {
+	  var _self = this;
+	  console.log(e.key, e.keyCode);
+	  if (_self._validCharacters) {
+	    if (e.key.length == 1 && !_self._isValidCharacter(e.key)) {
+	      e.preventDefault();
+	    }
+	  }
 	}
 
 	Field.prototype._onFieldInput = function(e) {
@@ -325,6 +372,27 @@
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var Field = __webpack_require__(4);
+
+	var IntegerField = function(config) {
+	  var _self = this;
+	  Field.call(_self, config);
+	  _self.el.setAttribute('type', 'number');
+	  _self.el.classList.add(_s.prefixClass('field--integer'));
+	  _self.setValidCharacters(/\d/);
+	}
+
+	IntegerField.prototype = Object.create(Field.prototype);
+	IntegerField.prototype.constructor = IntegerField;
+
+	module.exports = IntegerField;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {
