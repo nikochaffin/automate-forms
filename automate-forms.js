@@ -320,9 +320,26 @@
 	  }
 	}
 
-	Field.prototype.setValidCharacters = function(valid) {
+	Field.prototype.setAllowedCharacters = function(valid) {
 	  var _self = this;
-	  _self._validCharacters = new RegExp(valid, 'g');
+	  _self._allowedCharacters = new RegExp(valid, 'g');
+	}
+
+	Field.prototype.setLimitedCharacters = function(config) {
+	  var _self = this;
+	  _self._limitedCharacters = config;
+	}
+
+	Field.prototype._checkLimitedCharacter = function(char) {
+	  var _self = this;
+	  var charLimit = _self._limitedCharacters[char];
+	  if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
+	    var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
+	    var limit = charLimit.limit || charLimit;
+	    var uses = _self.value.match(re);
+	    return (!uses || uses.length < charLimit);
+	  }
+	  return true;
 	}
 
 	Field.prototype._onFieldFocus = function(e) {
@@ -330,7 +347,6 @@
 	  if (_self.wrapperEl) {
 	    _self.wrapperEl.classList.add(_s.prefixClass('field-focused'));
 	  }
-	  // console.log(_self.name, "focused");
 	}
 
 	Field.prototype._onFieldBlur = function(e) {
@@ -338,13 +354,12 @@
 	  if (_self.wrapperEl) {
 	    _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
 	  }
-	  // console.log(_self.name, "blurred");
 	}
 
 	Field.prototype._isValidCharacter = function(char) {
 	  var _self = this;
-	  if (_self._validCharacters) {
-	    return !!char.match(_self._validCharacters);
+	  if (_self._allowedCharacters) {
+	    return !!char.match(_self._allowedCharacters);
 	  } else {
 	    return true;
 	  }
@@ -352,17 +367,16 @@
 
 	Field.prototype._removeInvalidCharacters = function(str) {
 	  var _self = this;
-	  if (_self._validCharacters) {
-	    return str.match(_self._validCharacters).join("");
+	  if (_self._allowedCharacters) {
+	    return str.match(_self._allowedCharacters).join("");
 	  }
 	  return str;
 	}
 
 	Field.prototype._onKeyDown = function(e) {
 	  var _self = this;
-	  console.log(e.key, e.keyCode);
-	  if (_self._validCharacters) {
-	    if (e.key.length == 1 && !_self._isValidCharacter(e.key)) {
+	  if (_self._allowedCharacters) {
+	    if (e.key.length == 1 && (!_self._isValidCharacter(e.key) || !_self._checkLimitedCharacter(e.key))) {
 	      e.preventDefault();
 	    }
 	  }
@@ -378,7 +392,6 @@
 	      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
 	    }
 	  }
-	  // console.log(_self.name, "input");
 	}
 
 	module.exports = Field;
@@ -394,9 +407,8 @@
 	var IntegerField = function(config) {
 	  var _self = this;
 	  Field.call(_self, config);
-	  _self.el.setAttribute('type', 'number');
 	  _self.el.classList.add(_s.prefixClass('field--integer'));
-	  _self.setValidCharacters(/\d/);
+	  _self.setAllowedCharacters(/\d/);
 	}
 
 	IntegerField.prototype = Object.create(Field.prototype);
@@ -415,9 +427,14 @@
 	var DecimalField = function(config) {
 	  var _self = this;
 	  Field.call(_self, config);
-	  _self.el.setAttribute('type', 'number');
-	  _self.el.classList.add(_s.prefixClass('field--integer'));
-	  _self.setValidCharacters(/\d/);
+	  _self.el.classList.add(_s.prefixClass('field--decimal'));
+	  _self.setAllowedCharacters(/[\d\.]/);
+	  _self.setLimitedCharacters({
+	    ".": {
+	      re: /\./,
+	      limit: 1
+	    }
+	  });
 	}
 
 	DecimalField.prototype = Object.create(Field.prototype);
