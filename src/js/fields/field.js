@@ -42,7 +42,7 @@ function Field(config) {
     label.innerText = config.label || config.key;
     label.classList.add(_s.prefixClass('label'));
     wrapper.appendChild(label);
-    _self.label = label;
+    _self.labelEl = label;
   }
 }
 

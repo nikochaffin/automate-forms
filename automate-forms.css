@@ -33,14 +33,14 @@
     color: #737373; }
   .af-field::-webkit-outer-spin-button, .af-field::-webkit-inner-spin-button {
     -webkit-appearance: none; }
-  .af-field--checkbox {
+  .af-field--boolean {
     position: absolute;
     height: 0;
     opacity: 0; }
-    .af-field--checkbox:checked + .af-label--checkbox:before {
+    .af-field--boolean:checked + .af-label--boolean:before {
       background-color: #3f51b5;
       border-color: #3f51b5; }
-    .af-field--checkbox:checked + .af-label--checkbox:after {
+    .af-field--boolean:checked + .af-label--boolean:after {
       transform: scale(1) rotate(45deg); }
 
 .af-label {
@@ -59,18 +59,18 @@
   transform-origin: top left;
   transform: translate(0, 0);
   transition: transform 0.2s ease; }
-  .af-label--checkbox {
+  .af-label--boolean {
     display: inline-block;
     position: relative;
     line-height: 1.8;
     top: 0;
     cursor: pointer;
     padding-left: 2em; }
-    .af-label--checkbox:before, .af-label--checkbox:after {
+    .af-label--boolean:before, .af-label--boolean:after {
       content: "";
       display: block;
       position: absolute; }
-    .af-label--checkbox:before {
+    .af-label--boolean:before {
       box-sizing: border-box;
       width: 1.5em;
       height: 1.5em;
@@ -80,7 +80,7 @@
       left: 0;
       border-radius: 0.125em;
       transition: border-color 0.1 ease, background-color 0.1s ease; }
-    .af-label--checkbox:after {
+    .af-label--boolean:after {
       top: 0.2em;
       left: 0.15em;
       width: 0.35em;
@@ -115,6 +115,8 @@
   .af-field-wrapper.af-field-has-content .af-label, .af-field-wrapper.af-field-has-placeholder .af-label {
     transform: translate(0, -1em) scale(0.75);
     cursor: default; }
+  .af-field-wrapper--no-underline:after {
+    display: none; }
 
 .af-button {
   border: none;

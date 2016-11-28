@@ -4,6 +4,7 @@
   var StringField = require('./fields/stringField.js');
   var IntegerField = require('./fields/integerField.js');
   var DecimalField = require('./fields/decimalField.js');
+  var BooleanField = require('./fields/booleanField.js');
   var ajax = require('./utilities/ajaxCall');
 
   /**
@@ -127,6 +128,16 @@
     _self.el.appendChild(input.wrapperEl);
   }
 
+  AutomateForm.prototype.addBooleanField = function(config) {
+    var _self = this;
+
+    // Create the input element
+    var input = new BooleanField(config);
+
+    // Append the input and label elements
+    _self.el.appendChild(input.wrapperEl);
+  }
+
   AutomateForm.prototype.addField = function(config) {
     var _self = this;
     switch (config.type) {
@@ -138,6 +149,9 @@
         break;
       case "decimal":
         _self.addDecimalField(config);
+        break;
+      case "boolean":
+        _self.addBooleanField(config);
         break;
       default:
         console.warn("Uknown field type");

@@ -58,7 +58,8 @@
 	  var StringField = __webpack_require__(3);
 	  var IntegerField = __webpack_require__(6);
 	  var DecimalField = __webpack_require__(7);
-	  var ajax = __webpack_require__(8);
+	  var BooleanField = __webpack_require__(8);
+	  var ajax = __webpack_require__(10);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -181,6 +182,16 @@
 	    _self.el.appendChild(input.wrapperEl);
 	  }
 
+	  AutomateForm.prototype.addBooleanField = function(config) {
+	    var _self = this;
+
+	    // Create the input element
+	    var input = new BooleanField(config);
+
+	    // Append the input and label elements
+	    _self.el.appendChild(input.wrapperEl);
+	  }
+
 	  AutomateForm.prototype.addField = function(config) {
 	    var _self = this;
 	    switch (config.type) {
@@ -192,6 +203,9 @@
 	        break;
 	      case "decimal":
 	        _self.addDecimalField(config);
+	        break;
+	      case "boolean":
+	        _self.addBooleanField(config);
 	        break;
 	      default:
 	        console.warn("Uknown field type");
@@ -315,6 +329,9 @@
 
 	TextInputField.prototype._checkLimitedCharacter = function(char) {
 	  var _self = this;
+	  if (!_self._limitedCharacters) {
+	    return true;
+	  }
 	  var charLimit = _self._limitedCharacters[char];
 	  if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
 	    var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
@@ -376,7 +393,7 @@
 	    label.innerText = config.label || config.key;
 	    label.classList.add(_s.prefixClass('label'));
 	    wrapper.appendChild(label);
-	    _self.label = label;
+	    _self.labelEl = label;
 	  }
 	}
 
@@ -456,6 +473,46 @@
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var ControlField = __webpack_require__(9);
+
+	BooleanField.prototype = Object.create(ControlField.prototype);
+	BooleanField.prototype.constructor = BooleanField;
+
+	function BooleanField(config) {
+	  var _self = this;
+	  ControlField.call(_self, config);
+	  _self.el.setAttribute('type', 'checkbox');
+	  _self.el.classList.add(_s.prefixClass('field--boolean'));
+	  _self.labelEl.classList.add(_s.prefixClass('label--boolean'));
+	  _self.wrapperEl.classList.add(_s.prefixClass('field-wrapper--no-underline'));
+	}
+
+	module.exports = BooleanField;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var Field = __webpack_require__(5);
+
+	ControlField.prototype = Object.create(Field.prototype);
+	ControlField.prototype.constructor = ControlField;
+
+	function ControlField(config) {
+	  var _self = this;
+	  Field.call(_self, config);
+	}
+
+	module.exports = ControlField;
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {

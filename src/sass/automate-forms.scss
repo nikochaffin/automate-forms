@@ -42,12 +42,12 @@ $primary-color: #3f51b5;
     -webkit-appearance: none;
   }
 
-  &--checkbox {
+  &--boolean {
     position: absolute;
     height: 0;
     opacity: 0;
 
-    &:checked + .af-label--checkbox {
+    &:checked + .af-label--boolean {
       &:before {
         background-color: $primary-color;
         border-color: $primary-color;
@@ -77,7 +77,7 @@ $primary-color: #3f51b5;
   transform: translate(0,0);
   transition: transform 0.2s ease;
 
-  &--checkbox {
+  &--boolean {
     display: inline-block;
     position: relative;
     line-height: 1.8;
@@ -153,6 +153,12 @@ $primary-color: #3f51b5;
     .af-label {
       transform: translate(0, -1em) scale(0.75);
       cursor: default;
+    }
+  }
+
+  &--no-underline {
+    &:after {
+      display: none;
     }
   }
 }

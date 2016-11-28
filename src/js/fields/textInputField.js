@@ -41,6 +41,9 @@ TextInputField.prototype._isValidCharacter = function(char) {
 
 TextInputField.prototype._checkLimitedCharacter = function(char) {
   var _self = this;
+  if (!_self._limitedCharacters) {
+    return true;
+  }
   var charLimit = _self._limitedCharacters[char];
   if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
     var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
