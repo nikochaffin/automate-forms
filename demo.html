@@ -14,6 +14,13 @@
   </style>
   <h1>Demo of automate-forms</h1>
   <p>The form below should be transformed into a masterpiece.</p>
-  <form automate-form="formtesting.foo"></form>
+  <form automate-form="formtesting.foo">
+    <div class="af-field-wrapper">
+      <input class="af-field--checkbox" type="checkbox" id="checktest" name="checktest">
+      <label class="af-label--checkbox" for="checktest">
+        Checkbox Test
+      </label>
+    </div>
+  </form>
 </body>
 </html>
