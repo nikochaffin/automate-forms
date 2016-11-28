@@ -56,14 +56,14 @@
 
 	  var _s = __webpack_require__(2);
 	  var StringField = __webpack_require__(3);
-	  var IntegerField = __webpack_require__(5);
-	  var DecimalField = __webpack_require__(6);
-	  var ajax = __webpack_require__(7);
+	  var IntegerField = __webpack_require__(6);
+	  var DecimalField = __webpack_require__(7);
+	  var ajax = __webpack_require__(8);
 
 	  /**
 	   * The constructor for the AutomateForm object
 	   */
-	  var AutomateForm = function(node) {
+	  function AutomateForm(node) {
 	    var _self = this;
 	    _self.el = node;
 	    _self.name = node.getAttribute('automate-form').split('.');
@@ -253,17 +253,17 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var _s = __webpack_require__(2);
-	var Field = __webpack_require__(4);
+	var TextInputField = __webpack_require__(4);
 
-	var StringField = function(config) {
+	StringField.prototype = Object.create(TextInputField.prototype);
+	StringField.prototype.constructor = StringField;
+
+	function StringField(config) {
 	  var _self = this;
-	  Field.call(_self, config);
+	  TextInputField.call(_self, config);
 	  _self.el.setAttribute('type', 'text');
 	  _self.el.classList.add(_s.prefixClass('field--string'));
 	}
-
-	StringField.prototype = Object.create(Field.prototype);
-	StringField.prototype.constructor = StringField;
 
 	module.exports = StringField;
 
@@ -273,8 +273,68 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var _s = __webpack_require__(2);
+	var Field = __webpack_require__(5);
 
-	var Field = function(config) {
+	TextInputField.prototype = Object.create(Field.prototype);
+	TextInputField.prototype.constructor = TextInputField;
+
+	function TextInputField(config) {
+	  var _self = this;
+	  Field.call(_self, config);
+
+	  _self.el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
+	}
+
+	TextInputField.prototype._onKeyDown = function(e) {
+	  var _self = this;
+	  if (_self._allowedCharacters) {
+	    if (e.key.length == 1 && (!_self._isValidCharacter(e.key) || !_self._checkLimitedCharacter(e.key))) {
+	      e.preventDefault();
+	    }
+	  }
+	}
+
+	TextInputField.prototype.setAllowedCharacters = function(valid) {
+	  var _self = this;
+	  _self._allowedCharacters = new RegExp(valid, 'g');
+	}
+
+	TextInputField.prototype.setLimitedCharacters = function(config) {
+	  var _self = this;
+	  _self._limitedCharacters = config;
+	}
+
+	TextInputField.prototype._isValidCharacter = function(char) {
+	  var _self = this;
+	  if (_self._allowedCharacters) {
+	    return !!char.match(_self._allowedCharacters);
+	  } else {
+	    return true;
+	  }
+	}
+
+	TextInputField.prototype._checkLimitedCharacter = function(char) {
+	  var _self = this;
+	  var charLimit = _self._limitedCharacters[char];
+	  if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
+	    var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
+	    var limit = charLimit.limit || charLimit;
+	    var uses = _self.value.match(re);
+	    return (!uses || uses.length < charLimit);
+	  }
+	  return true;
+	}
+
+	module.exports = TextInputField;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+
+	function Field(config) {
 	  var _self = this;
 
 	  // Create the div to wrap around both elements
@@ -303,7 +363,6 @@
 	  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
 	  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
 	  el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
-	  el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
 
 	  _self.el = el;
 
@@ -317,29 +376,8 @@
 	    label.innerText = config.label || config.key;
 	    label.classList.add(_s.prefixClass('label'));
 	    wrapper.appendChild(label);
+	    _self.label = label;
 	  }
-	}
-
-	Field.prototype.setAllowedCharacters = function(valid) {
-	  var _self = this;
-	  _self._allowedCharacters = new RegExp(valid, 'g');
-	}
-
-	Field.prototype.setLimitedCharacters = function(config) {
-	  var _self = this;
-	  _self._limitedCharacters = config;
-	}
-
-	Field.prototype._checkLimitedCharacter = function(char) {
-	  var _self = this;
-	  var charLimit = _self._limitedCharacters[char];
-	  if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
-	    var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
-	    var limit = charLimit.limit || charLimit;
-	    var uses = _self.value.match(re);
-	    return (!uses || uses.length < charLimit);
-	  }
-	  return true;
 	}
 
 	Field.prototype._onFieldFocus = function(e) {
@@ -353,32 +391,6 @@
 	  var _self = this;
 	  if (_self.wrapperEl) {
 	    _self.wrapperEl.classList.remove(_s.prefixClass('field-focused'));
-	  }
-	}
-
-	Field.prototype._isValidCharacter = function(char) {
-	  var _self = this;
-	  if (_self._allowedCharacters) {
-	    return !!char.match(_self._allowedCharacters);
-	  } else {
-	    return true;
-	  }
-	}
-
-	Field.prototype._removeInvalidCharacters = function(str) {
-	  var _self = this;
-	  if (_self._allowedCharacters) {
-	    return str.match(_self._allowedCharacters).join("");
-	  }
-	  return str;
-	}
-
-	Field.prototype._onKeyDown = function(e) {
-	  var _self = this;
-	  if (_self._allowedCharacters) {
-	    if (e.key.length == 1 && (!_self._isValidCharacter(e.key) || !_self._checkLimitedCharacter(e.key))) {
-	      e.preventDefault();
-	    }
 	  }
 	}
 
@@ -398,35 +410,37 @@
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _s = __webpack_require__(2);
-	var Field = __webpack_require__(4);
-
-	var IntegerField = function(config) {
-	  var _self = this;
-	  Field.call(_self, config);
-	  _self.el.classList.add(_s.prefixClass('field--integer'));
-	  _self.setAllowedCharacters(/\d/);
-	}
-
-	IntegerField.prototype = Object.create(Field.prototype);
-	IntegerField.prototype.constructor = IntegerField;
-
-	module.exports = IntegerField;
-
-
-/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _s = __webpack_require__(2);
-	var Field = __webpack_require__(4);
+	var TextInputField = __webpack_require__(4);
 
-	var DecimalField = function(config) {
+	IntegerField.prototype = Object.create(TextInputField.prototype);
+	IntegerField.prototype.constructor = IntegerField;
+
+	function IntegerField(config) {
 	  var _self = this;
-	  Field.call(_self, config);
+	  TextInputField.call(_self, config);
+	  _self.el.classList.add(_s.prefixClass('field--integer'));
+	  _self.setAllowedCharacters(/\d/);
+	}
+	module.exports = IntegerField;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var TextInputField = __webpack_require__(4);
+
+	DecimalField.prototype = Object.create(TextInputField.prototype);
+	DecimalField.prototype.constructor = DecimalField;
+
+	function DecimalField(config) {
+	  var _self = this;
+	  TextInputField.call(_self, config);
 	  _self.el.classList.add(_s.prefixClass('field--decimal'));
 	  _self.setAllowedCharacters(/[\d\.]/);
 	  _self.setLimitedCharacters({
@@ -437,14 +451,11 @@
 	  });
 	}
 
-	DecimalField.prototype = Object.create(Field.prototype);
-	DecimalField.prototype.constructor = DecimalField;
-
 	module.exports = DecimalField;
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {

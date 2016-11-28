@@ -1,14 +1,13 @@
 var _s = require('../settings.js');
-var Field = require('./field.js');
+var TextInputField = require('./textInputField.js');
 
-var IntegerField = function(config) {
+IntegerField.prototype = Object.create(TextInputField.prototype);
+IntegerField.prototype.constructor = IntegerField;
+
+function IntegerField(config) {
   var _self = this;
-  Field.call(_self, config);
+  TextInputField.call(_self, config);
   _self.el.classList.add(_s.prefixClass('field--integer'));
   _self.setAllowedCharacters(/\d/);
 }
-
-IntegerField.prototype = Object.create(Field.prototype);
-IntegerField.prototype.constructor = IntegerField;
-
 module.exports = IntegerField;

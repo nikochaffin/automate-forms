@@ -9,7 +9,7 @@
   /**
    * The constructor for the AutomateForm object
    */
-  var AutomateForm = function(node) {
+  function AutomateForm(node) {
     var _self = this;
     _self.el = node;
     _self.name = node.getAttribute('automate-form').split('.');
