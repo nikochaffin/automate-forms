@@ -52,7 +52,7 @@ TextInputField.prototype._checkLimitedCharacter = function(char) {
   if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
     var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
     var limit = charLimit.limit || charLimit;
-    var uses = _self.value.match(re);
+    var uses = _self.value.toString().match(re);
     return (!uses || uses.length < charLimit);
   }
   return true;

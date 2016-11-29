@@ -363,7 +363,7 @@
 	  if (charLimit && (typeof charLimit == "number" || typeof charLimit.limit == "number")) {
 	    var re = new RegExp(charLimit.re, 'g') || new RegExp(char, 'g');
 	    var limit = charLimit.limit || charLimit;
-	    var uses = _self.value.match(re);
+	    var uses = _self.value.toString().match(re);
 	    return (!uses || uses.length < charLimit);
 	  }
 	  return true;
@@ -465,6 +465,12 @@
 
 	function IntegerField(config) {
 	  var _self = this;
+	  _self.valueParse = function(val) {
+	    if (val !== "") {
+	      return parseInt(val);
+	    }
+	    return "";
+	  }
 	  TextInputField.call(_self, config);
 	  _self.el.classList.add(_s.prefixClass('field--integer'));
 	  _self.setAllowedCharacters(/\d/);
@@ -484,6 +490,12 @@
 
 	function DecimalField(config) {
 	  var _self = this;
+	  _self.valueParse = function(val) {
+	    if (val !== "") {
+	      return parseFloat(val);
+	    }
+	    return "";
+	  }
 	  TextInputField.call(_self, config);
 	  _self.el.classList.add(_s.prefixClass('field--decimal'));
 	  _self.setAllowedCharacters(/[\d\.]/);
