@@ -5,6 +5,7 @@
   var IntegerField = require('./fields/integerField.js');
   var DecimalField = require('./fields/decimalField.js');
   var BooleanField = require('./fields/booleanField.js');
+  var FileField = require('./fields/fileField.js');
   var ajax = require('./utilities/ajaxCall');
 
   /**
@@ -22,6 +23,7 @@
       "integer": IntegerField,
       "decimal": DecimalField,
       "boolean": BooleanField,
+      "file": FileField,
     }
 
     _self.getFormRequest = ajax({
@@ -78,38 +80,6 @@
     });
 
     // TODO: need to throw an error here if the form does not have a name
-
-    // TODO: This is just an example field, remove in implementation
-    // _self.addField({
-    //   type: 'string',
-    //   key: 'fooBar',
-    //   placeholder: 'Optional Foo'
-    // });
-    //
-    // _self.addField({
-    //   type: 'string',
-    //   key: 'bar_and_stuff',
-    //   label: 'Special FooBar',
-    // });
-    //
-    // _self.addField({
-    //   type: 'string',
-    //   key: 'no_label',
-    //   label: false,
-    // });
-    //
-    // _self.addField({
-    //   type: 'string',
-    //   key: 'disabled_input',
-    //   label: false,
-    //   disabled: true,
-    //   placeholder: 'Disabled'
-    // });
-
-    // var submitButton = document.createElement('button');
-    // submitButton.setAttribute('type', 'submit');
-    // submitButton.innerText = "Submit";
-    // _self.el.appendChild(submitButton);
   }
 
   AutomateForm.prototype.getUrlBase = function() {
@@ -118,46 +88,6 @@
 
   AutomateForm.prototype.getPostUrl = function() {
     return this.getUrlBase() + "/api/v1/forms/post_form";
-  }
-
-  AutomateForm.prototype.addStringField = function(config) {
-    var _self = this;
-
-    // Create the input element
-    var input = new StringField(config);
-
-    // Append the input and label elements
-    _self.el.appendChild(input.wrapperEl);
-  }
-
-  AutomateForm.prototype.addIntegerField = function(config) {
-    var _self = this;
-
-    // Create the input element
-    var input = new IntegerField(config);
-
-    // Append the input and label elements
-    _self.el.appendChild(input.wrapperEl);
-  }
-
-  AutomateForm.prototype.addDecimalField = function(config) {
-    var _self = this;
-
-    // Create the input element
-    var input = new DecimalField(config);
-
-    // Append the input and label elements
-    _self.el.appendChild(input.wrapperEl);
-  }
-
-  AutomateForm.prototype.addBooleanField = function(config) {
-    var _self = this;
-
-    // Create the input element
-    var input = new BooleanField(config);
-
-    // Append the input and label elements
-    _self.el.appendChild(input.wrapperEl);
   }
 
   AutomateForm.prototype.addField = function(config) {
@@ -169,23 +99,9 @@
       _self.el.appendChild(field.wrapperEl);
       _self.fields[config.key]._field = field;
       delete _self.fields[config.key].val;
+    } else {
+      console.warn("Couldn't create a field for the type \"" + config.type + "\".");
     }
-    // switch (config.type) {
-    //   case "string":
-    //     _self.addStringField(config);
-    //     break;
-    //   case "integer":
-    //     _self.addIntegerField(config);
-    //     break;
-    //   case "decimal":
-    //     _self.addDecimalField(config);
-    //     break;
-    //   case "boolean":
-    //     _self.addBooleanField(config);
-    //     break;
-    //   default:
-    //     console.warn("Uknown field type");
-    // }
   }
 
   /**

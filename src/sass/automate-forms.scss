@@ -2,7 +2,20 @@ $grey-light: #ccc;
 $grey-medium: #737373;
 $grey-dark: #212121;
 $green: #55C68C;
+$red: #FF5656;
 $primary-color: #3f51b5;
+
+@mixin button-base() {
+  display: inline-block;
+  border: none;
+  font-size: 1em;
+  line-height: 1.5;
+  font-family: inherit;
+  padding: 0.5em 1.25em;
+  border-radius: 0.2em;
+  cursor: pointer;
+  position: relative;
+}
 
 .af-field {
   position: relative;
@@ -58,6 +71,13 @@ $primary-color: #3f51b5;
       }
     }
   }
+
+  &--file {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    height: 0;
+  }
 }
 
 .af-label {
@@ -76,6 +96,16 @@ $primary-color: #3f51b5;
   transform-origin: top left;
   transform: translate(0,0);
   transition: transform 0.2s ease;
+
+  &--plain {
+    display: block;
+    position: static;
+    // font-size: 0.85em;
+    margin: 0.25em 0;
+    cursor: pointer;
+    color: $grey-medium;
+    // font-weight: bold;
+  }
 
   &--boolean {
     display: inline-block;
@@ -114,6 +144,34 @@ $primary-color: #3f51b5;
       border-right: 0.125em solid white;
       border-bottom: 0.125em solid white;
       transition: transform 0.15s ease;
+    }
+  }
+
+  &--file {
+    @include button-base();
+    position: relative;
+    top: 0;
+    color: white;
+    margin-top: 0;
+    background-color: $primary-color;
+    padding-left: 2.5em;
+
+    &:hover,
+    &:focus {
+      background-color: lighten($primary-color, 10);
+    }
+
+    &:before {
+      content: "";
+      background-image: url("/src/img/ic_file_upload_white_24px.svg");
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 1.5em;
+      height: 1.5em;
+      display: block;
+      position: absolute;
+      top: 0.5em;
+      left: 0.85em;
     }
   }
 }
@@ -164,22 +222,26 @@ $primary-color: #3f51b5;
 }
 
 .af-button {
-  border: none;
-  font-size: 1em;
-  line-height: 1.5;
-  height: 2.5em;
-  font-family: inherit;
-  margin-top: 1em;
-  padding: 0.5em 1.25em;
-  border-radius: 0.2em;
-  cursor: pointer;
-  position: relative;
+  @include button-base();
+
+  &.af-button--file-clear {
+    color: white;
+    background-color: $red;
+    vertical-align: top;
+    margin-left: 0.5em;
+
+    &:hover {
+      background-color: lighten($red, 10);
+    }
+  }
 
   .af-spinner {
     display: none;
   }
 
   &.af-submit-button {
+    height: 2.5em;
+    margin-top: 1em;
     color: white;
     background-color: $green;
 

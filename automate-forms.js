@@ -59,7 +59,8 @@
 	  var IntegerField = __webpack_require__(6);
 	  var DecimalField = __webpack_require__(7);
 	  var BooleanField = __webpack_require__(8);
-	  var ajax = __webpack_require__(10);
+	  var FileField = __webpack_require__(10);
+	  var ajax = __webpack_require__(11);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -76,6 +77,7 @@
 	      "integer": IntegerField,
 	      "decimal": DecimalField,
 	      "boolean": BooleanField,
+	      "file": FileField,
 	    }
 
 	    _self.getFormRequest = ajax({
@@ -132,38 +134,6 @@
 	    });
 
 	    // TODO: need to throw an error here if the form does not have a name
-
-	    // TODO: This is just an example field, remove in implementation
-	    // _self.addField({
-	    //   type: 'string',
-	    //   key: 'fooBar',
-	    //   placeholder: 'Optional Foo'
-	    // });
-	    //
-	    // _self.addField({
-	    //   type: 'string',
-	    //   key: 'bar_and_stuff',
-	    //   label: 'Special FooBar',
-	    // });
-	    //
-	    // _self.addField({
-	    //   type: 'string',
-	    //   key: 'no_label',
-	    //   label: false,
-	    // });
-	    //
-	    // _self.addField({
-	    //   type: 'string',
-	    //   key: 'disabled_input',
-	    //   label: false,
-	    //   disabled: true,
-	    //   placeholder: 'Disabled'
-	    // });
-
-	    // var submitButton = document.createElement('button');
-	    // submitButton.setAttribute('type', 'submit');
-	    // submitButton.innerText = "Submit";
-	    // _self.el.appendChild(submitButton);
 	  }
 
 	  AutomateForm.prototype.getUrlBase = function() {
@@ -172,46 +142,6 @@
 
 	  AutomateForm.prototype.getPostUrl = function() {
 	    return this.getUrlBase() + "/api/v1/forms/post_form";
-	  }
-
-	  AutomateForm.prototype.addStringField = function(config) {
-	    var _self = this;
-
-	    // Create the input element
-	    var input = new StringField(config);
-
-	    // Append the input and label elements
-	    _self.el.appendChild(input.wrapperEl);
-	  }
-
-	  AutomateForm.prototype.addIntegerField = function(config) {
-	    var _self = this;
-
-	    // Create the input element
-	    var input = new IntegerField(config);
-
-	    // Append the input and label elements
-	    _self.el.appendChild(input.wrapperEl);
-	  }
-
-	  AutomateForm.prototype.addDecimalField = function(config) {
-	    var _self = this;
-
-	    // Create the input element
-	    var input = new DecimalField(config);
-
-	    // Append the input and label elements
-	    _self.el.appendChild(input.wrapperEl);
-	  }
-
-	  AutomateForm.prototype.addBooleanField = function(config) {
-	    var _self = this;
-
-	    // Create the input element
-	    var input = new BooleanField(config);
-
-	    // Append the input and label elements
-	    _self.el.appendChild(input.wrapperEl);
 	  }
 
 	  AutomateForm.prototype.addField = function(config) {
@@ -223,23 +153,9 @@
 	      _self.el.appendChild(field.wrapperEl);
 	      _self.fields[config.key]._field = field;
 	      delete _self.fields[config.key].val;
+	    } else {
+	      console.warn("Couldn't create a field for the type \"" + config.type + "\".");
 	    }
-	    // switch (config.type) {
-	    //   case "string":
-	    //     _self.addStringField(config);
-	    //     break;
-	    //   case "integer":
-	    //     _self.addIntegerField(config);
-	    //     break;
-	    //   case "decimal":
-	    //     _self.addDecimalField(config);
-	    //     break;
-	    //   case "boolean":
-	    //     _self.addBooleanField(config);
-	    //     break;
-	    //   default:
-	    //     console.warn("Uknown field type");
-	    // }
 	  }
 
 	  /**
@@ -571,6 +487,97 @@
 
 /***/ },
 /* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var ControlField = __webpack_require__(9);
+
+	FileField.prototype = Object.create(ControlField.prototype);
+	FileField.prototype.constructor = FileField;
+
+	function FileField(config) {
+	  var _self = this;
+
+	  _self._onFieldChange = function(e) {
+	    console.log(_self.el.files);
+	    _self._clearFileList();
+	    if (_self.el.files) {
+	      for (var i = 0; i < _self.el.files.length; i++) {
+	        _self._addFileToList(_self.el.files[i], i);
+	      }
+	    }
+	  }
+
+	  _self._labelText = config.label || config.key;
+	  _self.multiple = config.multiple || false;
+
+	  ControlField.call(_self, config);
+	  _self.el.setAttribute('type', 'file');
+	  _self.el.classList.add(_s.prefixClass('field--file'));
+	  _self.labelEl.classList.add(_s.prefixClass('label--file'));
+	  _self.labelEl.innerText = "Click to upload";
+	  _self.wrapperEl.classList.add(_s.prefixClass('field-wrapper--no-underline'));
+
+	  var extraLabel = document.createElement("label");
+	  extraLabel.classList.add(_s.prefixClass("label--plain"));
+	  extraLabel.innerText = _self._labelText;
+	  extraLabel.setAttribute('for', config.inputName || config.key);
+	  _self.wrapperEl.insertBefore(extraLabel, _self.el);
+
+	  var clearButton = document.createElement("button");
+	  clearButton.setAttribute('type', 'button');
+	  clearButton.classList.add(_s.prefixClass("button"));
+	  clearButton.classList.add(_s.prefixClass("button--file-clear"));
+	  clearButton.innerText = "\u00d7";
+	  clearButton.addEventListener('click', function(e) { _self._resetFiles.call(_self, e) });
+	  _self.wrapperEl.appendChild(clearButton);
+
+	  var fileList = document.createElement("ul");
+	  fileList.classList.add(_s.prefixClass("file-list"));
+	  _self.wrapperEl.appendChild(fileList);
+	  _self.fileListEl = fileList;
+	}
+
+	FileField.prototype._addFileToList = function(file, i) {
+	  var _self = this;
+	  var li = document.createElement("li");
+	  li.innerText = file.name;
+	  li.setAttribute('data-i', i);
+	  // var closeButton = document.createElement("button");
+	  // closeButton.setAttribute('type', 'button');
+	  // closeButton.innerText = "\u00d7";
+	  // closeButton.addEventListener('click', function(e) { _self._onRemoveButtonClick.call(_self, e) });
+	  // li.appendChild(closeButton);
+	  _self.fileListEl.appendChild(li);
+	}
+
+	FileField.prototype._clearFileList = function() {
+	  var _self = this;
+	  if (_self.fileListEl) {
+	    while (_self.fileListEl.firstChild) {
+	      _self.fileListEl.removeChild(_self.fileListEl.firstChild);
+	    }
+	  }
+	}
+
+	FileField.prototype._resetFiles = function() {
+	  var _self = this;
+	  _self.el.value = "";
+	  _self._clearFileList();
+	}
+
+	FileField.prototype._onRemoveButtonClick = function(e) {
+	  var _self = this;
+	  var i = e.target.parentNode.getAttribute('data-i');
+	  i = parseInt(i);
+	  console.log(_self.el.files.splice(i, 0));
+	}
+
+	module.exports = FileField;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {
