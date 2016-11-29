@@ -67,6 +67,13 @@
       }).success(function(data) {
         console.log(data);
         _self.submitEl.removeAttribute('disabled');
+
+        var pre = document.createElement('pre');
+        var code = document.createElement('code');
+        code.innerText = JSON.stringify(data, null, 2);
+        pre.classList.add(_s.prefixClass('response-preview'))
+        pre.appendChild(code);
+        _self.el.appendChild(pre);
       })
     });
 
