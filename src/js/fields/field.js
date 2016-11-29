@@ -26,10 +26,6 @@ function Field(config) {
   }
   el.classList.add(_s.prefixClass('field'));
 
-  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
-  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
-  el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
-
   _self.el = el;
 
   _self.wrapperEl = wrapper;
@@ -60,16 +56,8 @@ Field.prototype._onFieldBlur = function(e) {
   }
 }
 
-Field.prototype._onFieldInput = function(e) {
-  var _self = this;
-  _self.value = _self.el.value;
-  if (_self.wrapperEl) {
-    if (_self.value !== "") {
-      _self.wrapperEl.classList.add(_s.prefixClass('field-has-content'));
-    } else {
-      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
-    }
-  }
+Field.prototype.valueParse = function(val) {
+  return val;
 }
 
 module.exports = Field;

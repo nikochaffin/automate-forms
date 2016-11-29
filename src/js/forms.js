@@ -17,6 +17,13 @@
     _self.instance = _self.name[0];
     _self.name = _self.name[1];
 
+    _self._fieldTypes = {
+      "string": StringField,
+      "integer": IntegerField,
+      "decimal": DecimalField,
+      "boolean": BooleanField,
+    }
+
     _self.getFormRequest = ajax({
       url: _self.getUrlBase() + '/api/v1/forms/get_form?form_name=' + _self.name,
     }).success(function(form) {
@@ -44,11 +51,19 @@
     _self.el.addEventListener('submit', function(e) {
       e.preventDefault();
       _self.submitEl.setAttribute('disabled', '');
-      var formData = new FormData(_self.el);
+      // var formData = new FormData();
+      var formData = {};
+      for (fieldName in _self.fields) {
+        var field = _self.fields[fieldName];
+        formData[fieldName] = field._field.value;
+      }
       _self.sumbitFormRequest = ajax({
         method: "POST",
         url: _self.getPostUrl(),
-        data: formData,
+        data: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json"
+        }
       }).success(function(data) {
         console.log(data);
         _self.submitEl.removeAttribute('disabled');
@@ -140,22 +155,30 @@
 
   AutomateForm.prototype.addField = function(config) {
     var _self = this;
-    switch (config.type) {
-      case "string":
-        _self.addStringField(config);
-        break;
-      case "integer":
-        _self.addIntegerField(config);
-        break;
-      case "decimal":
-        _self.addDecimalField(config);
-        break;
-      case "boolean":
-        _self.addBooleanField(config);
-        break;
-      default:
-        console.warn("Uknown field type");
+    _self.fields = _self.fields || {};
+    _self.fields[config.key] = config;
+    if (_self._fieldTypes[config.type]) {
+      var field = new _self._fieldTypes[config.type](config);
+      _self.el.appendChild(field.wrapperEl);
+      _self.fields[config.key]._field = field;
+      delete _self.fields[config.key].val;
     }
+    // switch (config.type) {
+    //   case "string":
+    //     _self.addStringField(config);
+    //     break;
+    //   case "integer":
+    //     _self.addIntegerField(config);
+    //     break;
+    //   case "decimal":
+    //     _self.addDecimalField(config);
+    //     break;
+    //   case "boolean":
+    //     _self.addBooleanField(config);
+    //     break;
+    //   default:
+    //     console.warn("Uknown field type");
+    // }
   }
 
   /**

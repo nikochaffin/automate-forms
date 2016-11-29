@@ -6,6 +6,10 @@ BooleanField.prototype.constructor = BooleanField;
 
 function BooleanField(config) {
   var _self = this;
+  _self.valueParse = function(val) {
+    var _self = this;
+    return _self.el.checked;
+  }
   ControlField.call(_self, config);
   _self.el.setAttribute('type', 'checkbox');
   _self.el.classList.add(_s.prefixClass('field--boolean'));

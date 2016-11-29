@@ -8,7 +8,11 @@ function TextInputField(config) {
   var _self = this;
   Field.call(_self, config);
 
+  _self.el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
+  _self.el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
+  _self.el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
   _self.el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
+  _self._onFieldInput();
 }
 
 TextInputField.prototype._onKeyDown = function(e) {
@@ -52,6 +56,18 @@ TextInputField.prototype._checkLimitedCharacter = function(char) {
     return (!uses || uses.length < charLimit);
   }
   return true;
+}
+
+TextInputField.prototype._onFieldInput = function(e) {
+  var _self = this;
+  _self.value = _self.valueParse(_self.el.value);
+  if (_self.wrapperEl) {
+    if (_self.value !== "") {
+      _self.wrapperEl.classList.add(_s.prefixClass('field-has-content'));
+    } else {
+      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
+    }
+  }
 }
 
 module.exports = TextInputField;

@@ -71,6 +71,13 @@
 	    _self.instance = _self.name[0];
 	    _self.name = _self.name[1];
 
+	    _self._fieldTypes = {
+	      "string": StringField,
+	      "integer": IntegerField,
+	      "decimal": DecimalField,
+	      "boolean": BooleanField,
+	    }
+
 	    _self.getFormRequest = ajax({
 	      url: _self.getUrlBase() + '/api/v1/forms/get_form?form_name=' + _self.name,
 	    }).success(function(form) {
@@ -98,11 +105,19 @@
 	    _self.el.addEventListener('submit', function(e) {
 	      e.preventDefault();
 	      _self.submitEl.setAttribute('disabled', '');
-	      var formData = new FormData(_self.el);
+	      // var formData = new FormData();
+	      var formData = {};
+	      for (fieldName in _self.fields) {
+	        var field = _self.fields[fieldName];
+	        formData[fieldName] = field._field.value;
+	      }
 	      _self.sumbitFormRequest = ajax({
 	        method: "POST",
 	        url: _self.getPostUrl(),
-	        data: formData,
+	        data: JSON.stringify(formData),
+	        headers: {
+	          "Content-Type": "application/json"
+	        }
 	      }).success(function(data) {
 	        console.log(data);
 	        _self.submitEl.removeAttribute('disabled');
@@ -194,22 +209,30 @@
 
 	  AutomateForm.prototype.addField = function(config) {
 	    var _self = this;
-	    switch (config.type) {
-	      case "string":
-	        _self.addStringField(config);
-	        break;
-	      case "integer":
-	        _self.addIntegerField(config);
-	        break;
-	      case "decimal":
-	        _self.addDecimalField(config);
-	        break;
-	      case "boolean":
-	        _self.addBooleanField(config);
-	        break;
-	      default:
-	        console.warn("Uknown field type");
+	    _self.fields = _self.fields || {};
+	    _self.fields[config.key] = config;
+	    if (_self._fieldTypes[config.type]) {
+	      var field = new _self._fieldTypes[config.type](config);
+	      _self.el.appendChild(field.wrapperEl);
+	      _self.fields[config.key]._field = field;
+	      delete _self.fields[config.key].val;
 	    }
+	    // switch (config.type) {
+	    //   case "string":
+	    //     _self.addStringField(config);
+	    //     break;
+	    //   case "integer":
+	    //     _self.addIntegerField(config);
+	    //     break;
+	    //   case "decimal":
+	    //     _self.addDecimalField(config);
+	    //     break;
+	    //   case "boolean":
+	    //     _self.addBooleanField(config);
+	    //     break;
+	    //   default:
+	    //     console.warn("Uknown field type");
+	    // }
 	  }
 
 	  /**
@@ -296,7 +319,11 @@
 	  var _self = this;
 	  Field.call(_self, config);
 
+	  _self.el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
+	  _self.el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
+	  _self.el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
 	  _self.el.addEventListener('keydown', function(e){ _self._onKeyDown.call(_self, e) });
+	  _self._onFieldInput();
 	}
 
 	TextInputField.prototype._onKeyDown = function(e) {
@@ -342,6 +369,18 @@
 	  return true;
 	}
 
+	TextInputField.prototype._onFieldInput = function(e) {
+	  var _self = this;
+	  _self.value = _self.valueParse(_self.el.value);
+	  if (_self.wrapperEl) {
+	    if (_self.value !== "") {
+	      _self.wrapperEl.classList.add(_s.prefixClass('field-has-content'));
+	    } else {
+	      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
+	    }
+	  }
+	}
+
 	module.exports = TextInputField;
 
 
@@ -377,10 +416,6 @@
 	  }
 	  el.classList.add(_s.prefixClass('field'));
 
-	  el.addEventListener('focus', function(e){ _self._onFieldFocus.call(_self, e) });
-	  el.addEventListener('blur', function(e){ _self._onFieldBlur.call(_self, e) });
-	  el.addEventListener('input', function(e){ _self._onFieldInput.call(_self, e) });
-
 	  _self.el = el;
 
 	  _self.wrapperEl = wrapper;
@@ -411,16 +446,8 @@
 	  }
 	}
 
-	Field.prototype._onFieldInput = function(e) {
-	  var _self = this;
-	  _self.value = _self.el.value;
-	  if (_self.wrapperEl) {
-	    if (_self.value !== "") {
-	      _self.wrapperEl.classList.add(_s.prefixClass('field-has-content'));
-	    } else {
-	      _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
-	    }
-	  }
+	Field.prototype.valueParse = function(val) {
+	  return val;
 	}
 
 	module.exports = Field;
@@ -483,6 +510,10 @@
 
 	function BooleanField(config) {
 	  var _self = this;
+	  _self.valueParse = function(val) {
+	    var _self = this;
+	    return _self.el.checked;
+	  }
 	  ControlField.call(_self, config);
 	  _self.el.setAttribute('type', 'checkbox');
 	  _self.el.classList.add(_s.prefixClass('field--boolean'));
@@ -506,6 +537,14 @@
 	function ControlField(config) {
 	  var _self = this;
 	  Field.call(_self, config);
+
+	  _self.el.addEventListener('change', function(e) { _self._onFieldChange.call(_self, e) });
+	  _self._onFieldChange();
+	}
+
+	ControlField.prototype._onFieldChange = function(e) {
+	  var _self = this;
+	  _self.value = _self.valueParse(_self.el.value);
 	}
 
 	module.exports = ControlField;
