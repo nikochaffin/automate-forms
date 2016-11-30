@@ -80,7 +80,7 @@
           "Content-Type": "application/json"
         }
       }).success(function(data) {
-        console.log(data);
+        // console.log(data);
         _self.submitEl.removeAttribute('disabled');
 
         var pre = document.createElement('pre');

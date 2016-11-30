@@ -22,7 +22,7 @@ function MultiInputField(config) {
   _self._choiceFields = [];
 
   for (var i = 0; i < config.choices.length; i++) {
-    console.log(config.choices[i]);
+    // console.log(config.choices[i]);
     var choiceConfig = {
       inputName: config.inputName || config.key,
       key: (config.inputName || config.key) + "[" + i + "]",
