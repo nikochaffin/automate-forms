@@ -516,6 +516,7 @@
 
 	function ChoiceField(config) {
 	  var _self = this;
+	  _self.value = "";
 	  _self._onFieldChange = function(e) {
 	    _self.value = e.target.value
 	  }
@@ -556,7 +557,6 @@
 	  _self._choiceFields = [];
 
 	  for (var i = 0; i < config.choices.length; i++) {
-	    // console.log(config.choices[i]);
 	    var choiceConfig = {
 	      inputName: config.inputName || config.key,
 	      key: (config.inputName || config.key) + "[" + i + "]",
@@ -565,6 +565,15 @@
 	    }
 	    var choiceField = new RadioField(choiceConfig);
 	    _self.wrapperEl.appendChild(choiceField.wrapperEl);
+	    _self._choiceFields.push(choiceField);
+	  }
+
+	  if (config.val) {
+	    for (var i = 0; i < _self._choiceFields.length; i++) {
+	      if (_self._choiceFields[i].el.value == config.val) {
+	        _self._choiceFields[i].el.checked = true;
+	      }
+	    }
 	  }
 	}
 
