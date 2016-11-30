@@ -73,6 +73,7 @@
 	    _self.name = node.getAttribute('automate-form').split('.');
 	    _self.instance = _self.name[0];
 	    _self.name = _self.name[1];
+	    _self.filesUploaded = false;
 
 	    _self._fieldTypes = {
 	      "string": StringField,
@@ -116,10 +117,49 @@
 	      }
 	    });
 
-	    _self.el.addEventListener('submit', function(e) {
+	    _self.el.addEventListener('submit', function(e) { _self._onSubmit.call(_self, e); });
+	  }
+
+	  AutomateForm.prototype._onSubmit = function(e) {
+	    if (e) {
 	      e.preventDefault();
-	      _self.submitEl.setAttribute('disabled', '');
-	      // var formData = new FormData();
+	    }
+	    var _self = this;
+	    _self.submitEl.setAttribute('disabled', '');
+
+	    var _fileFields = {};
+	    var _filesCount = 0;
+	    for (field in _self.fields) {
+	      if (_self.fields[field].type == "file" && _self.fields[field]._field.el.files.length > 0) {
+	        _fileFields[_self.fields[field].key] = _self.fields[field];
+	        _filesCount++;
+	      }
+	    }
+
+	    console.log(_filesCount);
+
+	    if (_filesCount > 0 && !_self.filesUploaded) {
+	      console.log("there are files to submit!");
+	      var formData = new FormData();
+	      formData.set('_submission_guid', _self._submissionField.value);
+	      for (field in _fileFields) {
+	        var _field = _fileFields[field]._field.el;
+	        for (var i = 0; i < _field.files.length; i++) {
+	          console.log(_field.files[i]);
+	          formData.append(field, _field.files[i], _field.files[i].name);
+	        }
+	      }
+	      _self.submitFileRequest = ajax({
+	        method: "POST",
+	        url: _self.getFileUrl(),
+	        data: formData
+	      }).success(function(data) {
+	        _self._appendResponse(data);
+	        _self.filesUploaded = true;
+	        _self._onSubmit();
+	      });
+	    } else {
+	      console.log("There are no files to submit");
 	      var formData = {};
 	      formData._submission_guid = _self._submissionField.value;
 	      for (fieldName in _self.fields) {
@@ -134,21 +174,12 @@
 	          "Content-Type": "application/json"
 	        }
 	      }).success(function(data) {
-	        // console.log(data);
 	        _self.submitEl.removeAttribute('disabled');
-
-	        var pre = document.createElement('pre');
-	        var code = document.createElement('code');
-	        code.innerText = JSON.stringify(data, null, 2);
-	        pre.classList.add(_s.prefixClass('response-preview'))
-	        pre.appendChild(code);
-	        _self.el.appendChild(pre);
-
+	        _self._appendResponse(data);
+	        _self.filesUploaded = false;
 	        _self._submissionField.value = newGuid();
-	      })
-	    });
-
-	    // TODO: need to throw an error here if the form does not have a name
+	      });
+	    }
 	  }
 
 	  AutomateForm.prototype.getUrlBase = function() {
@@ -157,6 +188,20 @@
 
 	  AutomateForm.prototype.getPostUrl = function() {
 	    return this.getUrlBase() + "/api/v1/forms/post_form";
+	  }
+
+	  AutomateForm.prototype.getFileUrl = function() {
+	    return this.getUrlBase() + "/api/v1/forms/file_upload";
+	  }
+
+	  AutomateForm.prototype._appendResponse = function(json) {
+	    var _self = this;
+	    var pre = document.createElement('pre');
+	    var code = document.createElement('code');
+	    code.innerText = JSON.stringify(json, null, 2);
+	    pre.classList.add(_s.prefixClass('response-preview'))
+	    pre.appendChild(code);
+	    _self.el.appendChild(pre);
 	  }
 
 	  AutomateForm.prototype.addField = function(config) {
@@ -516,7 +561,7 @@
 
 	function ChoiceField(config) {
 	  var _self = this;
-	  _self.value = "";
+	  _self.value = _self.value || "";
 	  _self._onFieldChange = function(e) {
 	    _self.value = e.target.value
 	  }

@@ -303,4 +303,5 @@
     left: 4px;
     background-color: #3f51b5;
     transform: scale(0);
-    transform-origin: center; }
+    transform-origin: center;
+    transition: transform 0.2s ease; }

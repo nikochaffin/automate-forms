@@ -100,5 +100,6 @@
     background-color: $primary-color;
     transform: scale(0);
     transform-origin: center;
+    transition: transform 0.2s ease;
   }
 }
