@@ -6,6 +6,7 @@ ChoiceField.prototype.constructor = ChoiceField;
 
 function ChoiceField(config) {
   var _self = this;
+  _self.value = "";
   _self._onFieldChange = function(e) {
     _self.value = e.target.value
   }
