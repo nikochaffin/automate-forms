@@ -62,6 +62,7 @@
 	  var ChoiceField = __webpack_require__(10);
 	  var FileField = __webpack_require__(13);
 	  var ajax = __webpack_require__(14);
+	  var newGuid = __webpack_require__(15);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -86,6 +87,15 @@
 	      url: _self.getUrlBase() + '/api/v1/forms/get_form?form_name=' + _self.name,
 	    }).success(function(form) {
 	      // console.log(form);
+
+	      var submitGuid = newGuid();
+	      var guidInput = document.createElement('input');
+	      guidInput.setAttribute('type', 'hidden');
+	      guidInput.setAttribute('name', '_submission_guid');
+	      guidInput.value = submitGuid;
+	      _self.el.appendChild(guidInput);
+	      _self._submissionField = guidInput;
+
 	      if (form.fields && form.fields.length > 0) {
 	        for (var i = 0; i < form.fields.length; i++) {
 	          _self.addField(form.fields[i]);
@@ -111,6 +121,7 @@
 	      _self.submitEl.setAttribute('disabled', '');
 	      // var formData = new FormData();
 	      var formData = {};
+	      formData._submission_guid = _self._submissionField.value;
 	      for (fieldName in _self.fields) {
 	        var field = _self.fields[fieldName];
 	        formData[fieldName] = field._field.value;
@@ -132,6 +143,8 @@
 	        pre.classList.add(_s.prefixClass('response-preview'))
 	        pre.appendChild(code);
 	        _self.el.appendChild(pre);
+
+	        _self._submissionField.value = newGuid();
 	      })
 	    });
 
@@ -718,6 +731,28 @@
 	}
 
 	module.exports = ajaxCall;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	/**
+	 * Generate new guid
+	 *
+	 * ripped off from http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+	 */
+	function newGuid() {
+	    var d = new Date().getTime();
+	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	        var r = (d + Math.random() * 16) % 16 | 0;
+	        d = Math.floor(d / 16);
+	        return (c == 'x' ? r : r & 3 | 8).toString(16);
+	    });
+	    return uuid;
+	}
+
+	module.exports = newGuid;
 
 
 /***/ }

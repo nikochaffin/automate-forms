@@ -8,6 +8,7 @@
   var ChoiceField = require('./fields/choiceField.js');
   var FileField = require('./fields/fileField.js');
   var ajax = require('./utilities/ajaxCall');
+  var newGuid = require('./utilities/newGuid');
 
   /**
    * The constructor for the AutomateForm object
@@ -32,6 +33,15 @@
       url: _self.getUrlBase() + '/api/v1/forms/get_form?form_name=' + _self.name,
     }).success(function(form) {
       // console.log(form);
+
+      var submitGuid = newGuid();
+      var guidInput = document.createElement('input');
+      guidInput.setAttribute('type', 'hidden');
+      guidInput.setAttribute('name', '_submission_guid');
+      guidInput.value = submitGuid;
+      _self.el.appendChild(guidInput);
+      _self._submissionField = guidInput;
+
       if (form.fields && form.fields.length > 0) {
         for (var i = 0; i < form.fields.length; i++) {
           _self.addField(form.fields[i]);
@@ -57,6 +67,7 @@
       _self.submitEl.setAttribute('disabled', '');
       // var formData = new FormData();
       var formData = {};
+      formData._submission_guid = _self._submissionField.value;
       for (fieldName in _self.fields) {
         var field = _self.fields[fieldName];
         formData[fieldName] = field._field.value;
@@ -78,6 +89,8 @@
         pre.classList.add(_s.prefixClass('response-preview'))
         pre.appendChild(code);
         _self.el.appendChild(pre);
+
+        _self._submissionField.value = newGuid();
       })
     });
 
