@@ -5,6 +5,7 @@
   var IntegerField = require('./fields/integerField.js');
   var DecimalField = require('./fields/decimalField.js');
   var BooleanField = require('./fields/booleanField.js');
+  var ChoiceField = require('./fields/choiceField.js');
   var FileField = require('./fields/fileField.js');
   var ajax = require('./utilities/ajaxCall');
 
@@ -24,6 +25,7 @@
       "decimal": DecimalField,
       "boolean": BooleanField,
       "file": FileField,
+      "choice": ChoiceField,
     }
 
     _self.getFormRequest = ajax({

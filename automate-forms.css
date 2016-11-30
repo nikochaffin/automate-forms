@@ -33,15 +33,6 @@
     color: #737373; }
   .af-field::-webkit-outer-spin-button, .af-field::-webkit-inner-spin-button {
     -webkit-appearance: none; }
-  .af-field--boolean {
-    position: absolute;
-    height: 0;
-    opacity: 0; }
-    .af-field--boolean:checked + .af-label--boolean:before {
-      background-color: #3f51b5;
-      border-color: #3f51b5; }
-    .af-field--boolean:checked + .af-label--boolean:after {
-      transform: scale(1) rotate(45deg); }
   .af-field--file {
     position: absolute;
     left: -9999px;
@@ -67,40 +58,17 @@
   .af-label--plain {
     display: block;
     position: static;
+    transform: none;
     margin: 0.25em 0;
     cursor: pointer;
     color: #737373; }
-  .af-label--boolean {
-    display: inline-block;
-    position: relative;
-    line-height: 1.8;
-    top: 0;
+  .af-label--choice {
+    display: block;
+    position: static;
+    transform: none;
+    margin: 0.25em 0;
     cursor: pointer;
-    padding-left: 2em; }
-    .af-label--boolean:before, .af-label--boolean:after {
-      content: "";
-      display: block;
-      position: absolute; }
-    .af-label--boolean:before {
-      box-sizing: border-box;
-      width: 1.5em;
-      height: 1.5em;
-      background-color: white;
-      border: 0.125em solid #737373;
-      top: 1px;
-      left: 0;
-      border-radius: 0.125em;
-      transition: border-color 0.1 ease, background-color 0.1s ease; }
-    .af-label--boolean:after {
-      top: 0.25em;
-      left: 0.15em;
-      width: 0.35em;
-      height: 0.75em;
-      transform: scale(0) rotate(45deg);
-      transform-origin: bottom right;
-      border-right: 0.125em solid white;
-      border-bottom: 0.125em solid white;
-      transition: transform 0.15s ease; }
+    color: #737373; }
   .af-label--file {
     display: inline-block;
     border: none;
@@ -157,6 +125,9 @@
     cursor: default; }
   .af-field-wrapper--no-underline:after {
     display: none; }
+
+.af-field-wrapper > .af-field-wrapper {
+  padding-top: 0.8em; }
 
 .af-button {
   display: inline-block;
@@ -226,9 +197,110 @@
     margin-top: 7px;
     background: currentcolor; }
 
+.af-file-list {
+  margin: 0; }
+
 .af-response-preview {
   color: #212121;
   background-color: #f2f2f2;
   border: 2px solid #ccc;
   padding: 15px 25px 20px;
   border-radius: 5px; }
+
+.af-field--boolean {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  opacity: 0; }
+  .af-field--boolean:checked + .af-label--boolean:before {
+    background-color: #3f51b5;
+    border-color: #3f51b5; }
+  .af-field--boolean:checked + .af-label--boolean:after {
+    transform: scale(1) rotate(45deg); }
+
+.af-label--boolean {
+  display: inline-block;
+  position: relative;
+  line-height: 22px;
+  top: 0;
+  cursor: pointer;
+  padding-left: 26px; }
+  .af-label--boolean:before, .af-label--boolean:after {
+    content: "";
+    display: block;
+    position: absolute; }
+  .af-label--boolean:before {
+    box-sizing: border-box;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border: 2px solid #737373;
+    top: 1px;
+    left: 0;
+    border-radius: 2px;
+    transition: border-color 0.1 ease, background-color 0.1s ease; }
+  .af-label--boolean:after {
+    top: 3.33333px;
+    left: 2px;
+    width: 4.666px;
+    height: 10px;
+    transform: scale(0) rotate(45deg);
+    transform-origin: bottom right;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transition: transform 0.15s ease; }
+
+.af-field--radio {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  opacity: 0; }
+  .af-field--radio:checked + .af-label--radio:before {
+    border-color: #3f51b5; }
+  .af-field--radio:checked + .af-label--radio:after {
+    transform: scale(1); }
+
+.af-label--radio {
+  display: inline-block;
+  position: relative;
+  line-height: 22px;
+  top: 0;
+  cursor: pointer;
+  padding-left: 26px; }
+  .af-label--radio:before, .af-label--radio:after {
+    content: "";
+    display: block;
+    position: absolute; }
+  .af-label--radio:before {
+    box-sizing: border-box;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border: 2px solid #737373;
+    top: 1px;
+    left: 0;
+    border-radius: 2px;
+    transition: border-color 0.1 ease, background-color 0.1s ease; }
+  .af-label--radio:after {
+    top: 3.33333px;
+    left: 2px;
+    width: 4.666px;
+    height: 10px;
+    transform: scale(0) rotate(45deg);
+    transform-origin: bottom right;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transition: transform 0.15s ease; }
+  .af-label--radio:before, .af-label--radio:after {
+    border-radius: 50%; }
+  .af-label--radio:before {
+    top: 0; }
+  .af-label--radio:after {
+    border: none;
+    width: 12px;
+    height: 12px;
+    top: 4px;
+    left: 4px;
+    background-color: #3f51b5;
+    transform: scale(0);
+    transform-origin: center; }

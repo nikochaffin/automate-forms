@@ -59,8 +59,9 @@
 	  var IntegerField = __webpack_require__(6);
 	  var DecimalField = __webpack_require__(7);
 	  var BooleanField = __webpack_require__(8);
-	  var FileField = __webpack_require__(10);
-	  var ajax = __webpack_require__(11);
+	  var ChoiceField = __webpack_require__(10);
+	  var FileField = __webpack_require__(13);
+	  var ajax = __webpack_require__(14);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -78,6 +79,7 @@
 	      "decimal": DecimalField,
 	      "boolean": BooleanField,
 	      "file": FileField,
+	      "choice": ChoiceField,
 	    }
 
 	    _self.getFormRequest = ajax({
@@ -325,7 +327,7 @@
 	  var inputName = config.inputName || config.key;
 	  var el = document.createElement(elTag);
 	  el.setAttribute('name', inputName);
-	  el.setAttribute('id', inputName);
+	  el.setAttribute('id', config.key);
 	  if (config.placeholder) {
 	    el.setAttribute('placeholder', config.placeholder || '');
 	    wrapper.classList.add(_s.prefixClass('field-has-placeholder'));
@@ -347,7 +349,7 @@
 	  // Create the label element
 	  if (config.label !== false) {
 	    var label = document.createElement('label');
-	    label.setAttribute('for', config.inputName || config.key);
+	    label.setAttribute('for', config.key);
 	    label.innerText = config.label || config.key;
 	    label.classList.add(_s.prefixClass('label'));
 	    wrapper.appendChild(label);
@@ -473,8 +475,12 @@
 	  var _self = this;
 	  Field.call(_self, config);
 
+	  _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
+	  _self.wrapperEl.classList.remove(_s.prefixClass('field-has-placeholder'));
 	  _self.el.addEventListener('change', function(e) { _self._onFieldChange.call(_self, e) });
-	  _self._onFieldChange();
+	  if (_self._onFieldChange) {
+	    _self._onFieldChange();
+	  }
 	}
 
 	ControlField.prototype._onFieldChange = function(e) {
@@ -487,6 +493,95 @@
 
 /***/ },
 /* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var MultiInputField = __webpack_require__(11);
+
+	ChoiceField.prototype = Object.create(MultiInputField.prototype);
+	ChoiceField.prototype.constructor = ChoiceField;
+
+	function ChoiceField(config) {
+	  var _self = this;
+	  _self._onFieldChange = function(e) {
+	    _self.value = e.target.value
+	  }
+	  MultiInputField.call(_self, config);
+	  _self.labelEl.classList.add(_s.prefixClass('label--choice'));
+	  _self.wrapperEl.classList.add(_s.prefixClass('field-wrapper--no-underline'));
+	  _self.wrapperEl.addEventListener('change', function(e) { _self._onFieldChange.call(_self, e) });
+	}
+
+	module.exports = ChoiceField;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var RadioField = __webpack_require__(12);
+
+	function MultiInputField(config) {
+	  var _self = this;
+
+	  // Create the div to wrap around both elements
+	  var wrapper = document.createElement('div');
+	  wrapper.classList.add(_s.prefixClass('field-wrapper'));
+	  _self.wrapperEl = wrapper;
+
+	  // Create the label element
+	  if (config.label !== false) {
+	    var label = document.createElement('label');
+	    label.setAttribute('for', config.inputName || config.key);
+	    label.innerText = config.label || config.key;
+	    label.classList.add(_s.prefixClass('label'));
+	    wrapper.appendChild(label);
+	    _self.labelEl = label;
+	  }
+
+	  _self._choiceFields = [];
+
+	  for (var i = 0; i < config.choices.length; i++) {
+	    console.log(config.choices[i]);
+	    var choiceConfig = {
+	      inputName: config.inputName || config.key,
+	      key: (config.inputName || config.key) + "[" + i + "]",
+	      val: config.choices[i][0],
+	      label: config.choices[i][1]
+	    }
+	    var choiceField = new RadioField(choiceConfig);
+	    _self.wrapperEl.appendChild(choiceField.wrapperEl);
+	  }
+	}
+
+	module.exports = MultiInputField;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var ControlField = __webpack_require__(9);
+
+	RadioField.prototype = Object.create(ControlField.prototype);
+	RadioField.prototype.constructor = RadioField;
+
+	function RadioField(config) {
+	  var _self = this;
+	  ControlField.call(_self, config);
+	  _self.el.setAttribute('type', 'radio');
+	  _self.el.classList.add(_s.prefixClass('field--radio'));
+	  _self.labelEl.classList.add(_s.prefixClass('label--radio'));
+	  _self.wrapperEl.classList.add(_s.prefixClass('field-wrapper--no-underline'));
+	}
+
+	module.exports = RadioField;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _s = __webpack_require__(2);
@@ -577,7 +672,7 @@
 
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {

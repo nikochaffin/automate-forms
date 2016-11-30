@@ -12,7 +12,7 @@ function Field(config) {
   var inputName = config.inputName || config.key;
   var el = document.createElement(elTag);
   el.setAttribute('name', inputName);
-  el.setAttribute('id', inputName);
+  el.setAttribute('id', config.key);
   if (config.placeholder) {
     el.setAttribute('placeholder', config.placeholder || '');
     wrapper.classList.add(_s.prefixClass('field-has-placeholder'));
@@ -34,7 +34,7 @@ function Field(config) {
   // Create the label element
   if (config.label !== false) {
     var label = document.createElement('label');
-    label.setAttribute('for', config.inputName || config.key);
+    label.setAttribute('for', config.key);
     label.innerText = config.label || config.key;
     label.classList.add(_s.prefixClass('label'));
     wrapper.appendChild(label);

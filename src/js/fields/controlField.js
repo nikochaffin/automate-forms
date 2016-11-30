@@ -8,8 +8,12 @@ function ControlField(config) {
   var _self = this;
   Field.call(_self, config);
 
+  _self.wrapperEl.classList.remove(_s.prefixClass('field-has-content'));
+  _self.wrapperEl.classList.remove(_s.prefixClass('field-has-placeholder'));
   _self.el.addEventListener('change', function(e) { _self._onFieldChange.call(_self, e) });
-  _self._onFieldChange();
+  if (_self._onFieldChange) {
+    _self._onFieldChange();
+  }
 }
 
 ControlField.prototype._onFieldChange = function(e) {
