@@ -21,6 +21,15 @@
   color: $grey-medium;
 }
 
+@mixin icon($icon-name) {
+  background-image: url("/src/img/#{$icon-name}");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 1.5em;
+  height: 1.5em;
+  display: block;
+}
+
 .af-field {
   position: relative;
   margin-bottom: 10px;
@@ -99,7 +108,7 @@
     color: white;
     margin-top: 0;
     background-color: $primary-color;
-    padding-left: 2.5em;
+    padding-left: 2.75em;
 
     &:hover,
     &:focus {
@@ -107,17 +116,25 @@
     }
 
     &:before {
+      @include icon("ic_file_upload_white_24px.svg");
       content: "";
-      background-image: url("/src/img/ic_file_upload_white_24px.svg");
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 1.5em;
-      height: 1.5em;
-      display: block;
       position: absolute;
       top: 0.5em;
       left: 0.85em;
     }
+  }
+}
+
+.af-has-files {
+  .af-label--file:before {
+    @include icon("ic_insert_drive_file_white_24px.svg");
+  }
+}
+
+.af-has-files,
+.af-has-files--multiple {
+  .af-button.af-button--file-clear {
+    display: inline-block;
   }
 }
 
@@ -178,6 +195,7 @@
     background-color: $red;
     vertical-align: top;
     margin-left: 0.5em;
+    display: none;
 
     &:hover {
       background-color: lighten($red, 10);
@@ -264,6 +282,21 @@
 
 .af-file-list {
   margin: 0;
+  list-style: none;
+
+  li {
+    margin: 0.5em 0 0.75em;
+    position: relative;
+    line-height: 1.5;
+
+    &:before {
+      @include icon("ic_insert_drive_file_black_24px.svg");
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -26px;
+    }
+  }
 }
 
 .af-response-preview {
