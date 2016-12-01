@@ -1,5 +1,5 @@
 var _s = require('../settings.js');
-var ControlField = require('./controlField.js');
+var ControlField = require('./abstracts/controlField.js');
 
 FileField.prototype = Object.create(ControlField.prototype);
 FileField.prototype.constructor = FileField;

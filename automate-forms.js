@@ -61,8 +61,9 @@
 	  var BooleanField = __webpack_require__(8);
 	  var ChoiceField = __webpack_require__(10);
 	  var FileField = __webpack_require__(13);
-	  var ajax = __webpack_require__(14);
-	  var newGuid = __webpack_require__(15);
+	  var DateField = __webpack_require__(14);
+	  var ajax = __webpack_require__(15);
+	  var newGuid = __webpack_require__(16);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -82,6 +83,7 @@
 	      "boolean": BooleanField,
 	      "file": FileField,
 	      "choice": ChoiceField,
+	      "date": DateField,
 	    }
 
 	    _self.getFormRequest = ajax({
@@ -757,6 +759,38 @@
 
 /***/ },
 /* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _s = __webpack_require__(2);
+	var TextInputField = __webpack_require__(4);
+
+	DateField.prototype = Object.create(TextInputField.prototype);
+	DateField.prototype.constructor = DateField;
+
+	function DateField(config) {
+	  var _self = this;
+	  _self.valueParse = function(val) {
+	    if (val !== "") {
+	      return parseFloat(val);
+	    }
+	    return "";
+	  }
+	  TextInputField.call(_self, config);
+	  _self.el.classList.add(_s.prefixClass('field--decimal'));
+	  _self.setAllowedCharacters(/[\d\.]/);
+	  _self.setLimitedCharacters({
+	    ".": {
+	      re: /\./,
+	      limit: 1
+	    }
+	  });
+	}
+
+	module.exports = DateField;
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports) {
 
 	function ajaxCall(config) {
@@ -805,7 +839,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/**

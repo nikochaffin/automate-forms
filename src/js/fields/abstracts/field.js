@@ -1,4 +1,4 @@
-var _s = require('../settings.js');
+var _s = require('../../settings.js');
 
 function Field(config) {
   var _self = this;

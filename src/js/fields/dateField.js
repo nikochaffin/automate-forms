@@ -1,10 +1,10 @@
 var _s = require('../settings.js');
 var TextInputField = require('./abstracts/textInputField.js');
 
-DecimalField.prototype = Object.create(TextInputField.prototype);
-DecimalField.prototype.constructor = DecimalField;
+DateField.prototype = Object.create(TextInputField.prototype);
+DateField.prototype.constructor = DateField;
 
-function DecimalField(config) {
+function DateField(config) {
   var _self = this;
   _self.valueParse = function(val) {
     if (val !== "") {
@@ -23,4 +23,4 @@ function DecimalField(config) {
   });
 }
 
-module.exports = DecimalField;
+module.exports = DateField;

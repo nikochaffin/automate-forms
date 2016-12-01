@@ -1,4 +1,4 @@
-var _s = require('../settings.js');
+var _s = require('../../settings.js');
 var Field = require('./field.js');
 
 TextInputField.prototype = Object.create(Field.prototype);

@@ -1,5 +1,5 @@
 var _s = require('../settings.js');
-var TextInputField = require('./textInputField.js');
+var TextInputField = require('./abstracts/textInputField.js');
 
 IntegerField.prototype = Object.create(TextInputField.prototype);
 IntegerField.prototype.constructor = IntegerField;

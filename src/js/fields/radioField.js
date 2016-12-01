@@ -1,5 +1,5 @@
 var _s = require('../settings.js');
-var ControlField = require('./controlField.js');
+var ControlField = require('./abstracts/controlField.js');
 
 RadioField.prototype = Object.create(ControlField.prototype);
 RadioField.prototype.constructor = RadioField;

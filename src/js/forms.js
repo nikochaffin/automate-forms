@@ -7,6 +7,7 @@
   var BooleanField = require('./fields/booleanField.js');
   var ChoiceField = require('./fields/choiceField.js');
   var FileField = require('./fields/fileField.js');
+  var DateField = require('./fields/dateField.js');
   var ajax = require('./utilities/ajaxCall');
   var newGuid = require('./utilities/newGuid');
 
@@ -28,6 +29,7 @@
       "boolean": BooleanField,
       "file": FileField,
       "choice": ChoiceField,
+      "date": DateField,
     }
 
     _self.getFormRequest = ajax({

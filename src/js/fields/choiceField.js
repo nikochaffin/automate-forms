@@ -1,5 +1,5 @@
 var _s = require('../settings.js');
-var MultiInputField = require('./multiInputField.js');
+var MultiInputField = require('./abstracts/multiInputField.js');
 
 ChoiceField.prototype = Object.create(MultiInputField.prototype);
 ChoiceField.prototype.constructor = ChoiceField;
