@@ -88,7 +88,7 @@
     .af-label--file:hover, .af-label--file:focus {
       background-color: #606fc7; }
     .af-label--file:before {
-      background-image: url("./src/img/ic_file_upload_white_24px.svg");
+      background-image: url("src/img/ic_file_upload_white_24px.svg");
       background-repeat: no-repeat;
       background-size: cover;
       width: 1.5em;
@@ -100,7 +100,7 @@
       left: 0.85em; }
 
 .af-has-files .af-label--file:before {
-  background-image: url("./src/img/ic_insert_drive_file_white_24px.svg");
+  background-image: url("src/img/ic_insert_drive_file_white_24px.svg");
   background-repeat: no-repeat;
   background-size: cover;
   width: 1.5em;
@@ -218,7 +218,7 @@
     position: relative;
     line-height: 1.5; }
     .af-file-list li:before {
-      background-image: url("./src/img/ic_insert_drive_file_black_24px.svg");
+      background-image: url("src/img/ic_insert_drive_file_black_24px.svg");
       background-repeat: no-repeat;
       background-size: cover;
       width: 1.5em;

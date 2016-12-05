@@ -22,7 +22,7 @@
 }
 
 @mixin icon($icon-name) {
-  background-image: url("./src/img/#{$icon-name}");
+  background-image: url("src/img/#{$icon-name}");
   background-repeat: no-repeat;
   background-size: cover;
   width: 1.5em;
