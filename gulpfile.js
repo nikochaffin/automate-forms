@@ -23,14 +23,18 @@ gulp.task('bundle-js', function() {
 });
 
 gulp.task('compile-sass', function() {
-  return gulp.src('src/sass/automate-forms.scss')
+  return gulp.src('src/sass/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer({ browsers: 'last 2 versions' }))
-    .pipe(rename('automate-forms.css'))
+    .pipe(rename(function(path) {
+      path.extname = ".css"
+    }))
     .pipe(gulp.dest('.'))
     .pipe(browserSync.stream())
     .pipe(cleanCSS())
-    .pipe(rename('automate-forms.min.css'))
+    .pipe(rename(function(path) {
+      path.basename += ".min";
+    }))
     .pipe(gulp.dest('.'))
     .pipe(browserSync.stream());
 });
@@ -48,9 +52,20 @@ gulp.task('serve', ['watch'], function() {
     }
   });
 
-  // gulp.watch(['./automate-forms.css', './automate-forms.min.css']).on('change', browserSync.stream);
   gulp.watch('./*.js').on('change', browserSync.reload);
   gulp.watch('./*.html').on('change', browserSync.reload);
 });
+
+gulp.task('serve-gh-pages', ['watch'], function() {
+  browserSync.init({
+    server: {
+      baseDir: '..',
+      index: 'automate-forms/index.html',
+    }
+  });
+
+  gulp.watch('./*.js').on('change', browserSync.reload);
+  gulp.watch('./*.html').on('change', browserSync.reload);
+})
 
 gulp.task('default', ['serve']);

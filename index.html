@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <link rel="stylesheet" href="/automate-forms/automate-forms.css">
+  <link rel="stylesheet" href="/automate-forms/automate-forms.min.css">
+  <link rel="stylesheet" href="/automate-forms/af-gh-pages.min.css">
   <style>
     body {
       font-family: "Helvetica", "Arial", sans-serif;
@@ -13,7 +14,35 @@
   <title>Bixly Automate | Forms Demo</title>
 </head>
 <body>
-  <h1>Demo of automate-forms</h1>
-  <form automate-form="formtesting.person_form"></form>
+  <div class="wrapper">
+    <div class="content-wrapper">
+      <h1>Bixly Automate Forms</h1>
+      <h2>Generating Form Fields</h2>
+      <p>
+        The demo form on this page is generated using the <code>automate-forms.js</code> file, which automatically generates fields for any <code>&lt;form&gt;</code> element that has the <code>automate-form</code> attribute. The demo form is marked up as such:
+      </p>
+      <pre><code>&lt;form automate-form="formtesting.person_form"&gt;&lt;/form&gt;</code></pre>
+      <p>
+        The value of the <code>automate-form</code> attribute is <code>&lt;instance&gt;.&lt;form-name&gt;</code>. That is, the name of the Bixly Automate instance to send an AJAX request to in order to retrieve a configuration object for generating fields, followed by a period and the name of the form to get the fields for.
+      </p>
+      <!-- <p>
+        The auto generated fields carry some convenient presets for
+      </p> -->
+
+      <hr>
+
+      <h2>Submitting Forms</h2>
+      <p>
+        As perviously mentioned, the <code>automate-forms.js</code> file provides some convenient defaults for handling form submissions to Bixly Automate instances. However, it is not required, and you can simply send AJAX requests to the API endpoints of your instance.
+      </p>
+      <p>
+        Endpoints will differ per instance, depending on how the developer has written the API scripts for the instance. In the case of the <code>formtesting</code> instance, there is one API script, <code>forms</code>, which has the <code>post_form</code> and <code>file_upload</code> methods. Following the paradigm for the API enpoints generated Bixly Automate instances, this means that two enpoints are available:
+      </p>
+      <pre><code>https://formtesting.nebrios.com/api/v1/forms/post_form
+https://formtesting.nebrios.com/api/v1/forms/file_upload</code></pre>
+    </div>
+    <div class="form-wrapper">
+      <form automate-form="formtesting.person_form"></form>
+    </div>
 </body>
 </html>

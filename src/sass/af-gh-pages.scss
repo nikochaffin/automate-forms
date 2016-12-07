@@ -1,0 +1,72 @@
+$grey-light: #eee;
+$grey-med: #bbb;
+
+$form-width: 400px;
+$content-width: 600px;
+$form-wrapper-gutter: 60px;
+
+$code-bg: $grey-light;
+$hr-border-color: $grey-med;
+
+h1 {
+  font-size: 2.5em;
+}
+
+p {
+  line-height: 1.6em;
+}
+
+pre, code {
+  background: $code-bg;
+  border-radius: 3px;
+}
+
+pre {
+  display: block;
+  padding: 1em 1.25em;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  code {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+code {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  line-height: 1em;
+  position: relative;
+  top: -2px;
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid $hr-border-color;
+  margin: 2em 0;
+}
+
+.wrapper {
+  max-width: $form-width + $content-width + $form-wrapper-gutter;
+  position: relative;
+  margin: 0 auto;
+}
+
+.content-wrapper {
+  padding-right: $form-width;
+  margin-right: $form-wrapper-gutter;
+}
+
+.form-wrapper {
+  width: $form-width;
+  position: absolute;
+  top: 0;
+  right: $form-wrapper-gutter / 2;
+}
