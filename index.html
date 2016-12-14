@@ -36,10 +36,55 @@
         As perviously mentioned, the <code>automate-forms.js</code> file provides some convenient defaults for handling form submissions to Bixly Automate instances. However, it is not required, and you can simply send AJAX requests to the API endpoints of your instance.
       </p>
       <p>
-        Endpoints will differ per instance, depending on how the developer has written the API scripts for the instance. In the case of the <code>formtesting</code> instance, there is one API script, <code>forms</code>, which has the <code>post_form</code> and <code>file_upload</code> methods. Following the paradigm for the API enpoints generated Bixly Automate instances, this means that two enpoints are available:
+        Endpoints will differ per instance, depending on how the developer has written the API scripts for the instance. In the case of the <code>formtesting</code> instance, there is one API script, <code>forms</code>, which has the <code>post_form</code> and <code>file_upload</code> methods. Following the paradigm for the API endpoints generated Bixly Automate instances, this means that two endpoints are available:
       </p>
       <pre><code>https://formtesting.nebrios.com/api/v1/forms/post_form
 https://formtesting.nebrios.com/api/v1/forms/file_upload</code></pre>
+
+      <h3>Submitting JSON data</h3>
+      <p>
+        In this case, the first endpoint, <code>forms/post_form</code>, is set up to handle POST requests in the <code>application/json</code> format. The endpoint is currently configured to do the following:
+      </p>
+      <ol>
+        <li>Take a POST request with a single JSON object</li>
+        <li>Create a new Process on the Automate instance</li>
+        <li>Loop through the keys and assign the values stored in each to a KVP in the new Process with the same key name</li>
+        <li>Save the Process</li>
+        <li>Return the Process in a JSON format</li>
+      </ol>
+
+      <h3>Uploading Files</h3>
+      <p>
+        If we need to submit a file (or multiple files), then we can use the <code>forms/file_upload</code> endpoint to do so. This endpoint also takes POST requests, but in the <code>application/x-www-form-urlencoded</code> format. The endpoint is currently configured to do the following:
+      </p>
+      <ol>
+        <li>Take a POST request with files, as well as a <code>_submission_guid</code></li>
+        <li>Loop through the files and write each to the Automate instance, using a directory named with the <code>_submission_guid</code></li>
+        <li>Create a new Process on the Automate instance</li>
+        <li>Save a list of the file names, along with the <code>_submission_guid</code> (saved as <code>_files_for_guid</code>)</li>
+        <li>Respond with the HTTP 200 response: <code>"Files received"</code></li>
+      </ol>
+      <p>
+        Once the response from the file upload request is received, we've configured JavaScript helpers to submit the rest of the form fields in a JSON format to the first endpoint, including the same <code>_submission_guid</code> that our request to upload files contained. Our first endpoint is additionally configured to check for any Processes on the Automate instance containing a KVP with the key <code>_file_for_guid</code> matching the <code>_submission_guid</code> of the data that was just submitted.
+      </p>
+
+      <hr>
+
+      <h2>KVP Types</h2>
+      <p>
+        When values are saved to KVPs in a Process, value types are automatically assigned based on the nature of the variable. For example, a Python Number will be saved as <code>type: "integer"</code> if it is an integer, or <code>type: "decimal"</code> if it is a floating-point number. The saved type for each KVP will be one of the following types:
+      </p>
+      <ul>
+        <li><code>string</code></li>
+        <li><code>integer</code></li>
+        <li><code>decimal</code></li>
+        <li><code>boolean</code></li>
+        <li><code>date</code></li>
+        <li><code>time</code></li>
+        <li><code>datetime</code></li>
+        <li><code>list</code></li>
+        <li><code>dict</code></li>
+      </ul>
     </div>
     <div class="form-wrapper">
       <form automate-form="formtesting.person_form"></form>

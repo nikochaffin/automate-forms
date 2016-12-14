@@ -16,6 +16,10 @@ p {
   line-height: 1.6em;
 }
 
+p, ul, ol {
+  margin-bottom: 1.6em;
+}
+
 pre, code {
   background: $code-bg;
   border-radius: 3px;
@@ -32,6 +36,7 @@ pre {
   word-break: break-all;
   /* Instead use this non-standard one: */
   word-break: break-word;
+  margin-bottom: 2em;
 
   code {
     padding: 0;
@@ -51,6 +56,10 @@ hr {
   border: none;
   border-bottom: 1px solid $hr-border-color;
   margin: 2em 0;
+}
+
+li {
+  margin-bottom: 0.5em;
 }
 
 .wrapper {

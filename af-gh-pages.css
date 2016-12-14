@@ -4,6 +4,9 @@ h1 {
 p {
   line-height: 1.6em; }
 
+p, ul, ol {
+  margin-bottom: 1.6em; }
+
 pre, code {
   background: #eee;
   border-radius: 3px; }
@@ -18,7 +21,8 @@ pre {
   /* This is the dangerous one in WebKit, as it breaks things wherever */
   word-break: break-all;
   /* Instead use this non-standard one: */
-  word-break: break-word; }
+  word-break: break-word;
+  margin-bottom: 2em; }
   pre code {
     padding: 0;
     background: transparent; }
@@ -34,6 +38,9 @@ hr {
   border: none;
   border-bottom: 1px solid #bbb;
   margin: 2em 0; }
+
+li {
+  margin-bottom: 0.5em; }
 
 .wrapper {
   max-width: 1060px;
