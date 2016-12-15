@@ -1,4 +1,4 @@
-var _s = require('../settings.js');
+var _s = require('../../utilities/settings.js');
 var RadioField = require('./radioField.js');
 
 function MultiInputField(config) {

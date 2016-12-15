@@ -7,18 +7,25 @@ var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync').create();
+var named = require('vinyl-named');
 
 gulp.task('bundle-js', function() {
-  var w = webpack();
+  var w = webpack({
+    output: {
+      filename: '[name].js'
+    }
+  });
   w.on('error', function(e) {
     this.emit('end');
   });
-  return gulp.src('src/js/index.js')
+  return gulp.src('src/js/*.js')
+    .pipe(named())
     .pipe(w)
-    .pipe(rename('automate-forms.js'))
     .pipe(gulp.dest('.'))
     .pipe(uglify())
-    .pipe(rename('automate-forms.min.js'))
+    .pipe(rename(function(path) {
+      path.basename += ".min"
+    }))
     .pipe(gulp.dest('.'))
 });
 

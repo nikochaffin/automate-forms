@@ -1,5 +1,5 @@
-var _s = require('../settings.js');
-var ControlField = require('./controlField.js');
+var _s = require('../../utilities/settings.js');
+var ControlField = require('../base-fields/controlField.js');
 
 BooleanField.prototype = Object.create(ControlField.prototype);
 BooleanField.prototype.constructor = BooleanField;

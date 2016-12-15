@@ -1,14 +1,14 @@
 (function(window, document, undefined){
 
-  var _s = require('./settings.js');
+  var _s = require('../utilities/settings.js');
   var StringField = require('./fields/stringField.js');
   var IntegerField = require('./fields/integerField.js');
   var DecimalField = require('./fields/decimalField.js');
   var BooleanField = require('./fields/booleanField.js');
   var ChoiceField = require('./fields/choiceField.js');
   var FileField = require('./fields/fileField.js');
-  var ajax = require('./utilities/ajaxCall');
-  var newGuid = require('./utilities/newGuid');
+  var ajax = require('../utilities/ajaxCall');
+  var newGuid = require('../utilities/newGuid');
 
   /**
    * The constructor for the AutomateForm object

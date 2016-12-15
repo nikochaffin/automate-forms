@@ -1,4 +1,4 @@
-var _s = require('../settings.js');
+var _s = require('../../utilities/settings.js');
 var Field = require('./field.js');
 
 ControlField.prototype = Object.create(Field.prototype);

@@ -1,4 +1,4 @@
-var _s = require('../settings.js');
+var _s = require('../../utilities/settings.js');
 var MultiInputField = require('./multiInputField.js');
 
 ChoiceField.prototype = Object.create(MultiInputField.prototype);

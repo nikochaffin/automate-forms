@@ -1,5 +1,5 @@
-var _s = require('../settings.js');
-var TextInputField = require('./textInputField.js');
+var _s = require('../../utilities/settings.js');
+var TextInputField = require('../base-fields/textInputField.js');
 
 DecimalField.prototype = Object.create(TextInputField.prototype);
 DecimalField.prototype.constructor = DecimalField;
