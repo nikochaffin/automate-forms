@@ -21,12 +21,12 @@ gulp.task('bundle-js', function() {
   return gulp.src('src/js/*.js')
     .pipe(named())
     .pipe(w)
-    .pipe(gulp.dest('.'))
+    .pipe(gulp.dest('./dist/js'))
     .pipe(uglify())
     .pipe(rename(function(path) {
       path.basename += ".min"
     }))
-    .pipe(gulp.dest('.'))
+    .pipe(gulp.dest('./dist/js'))
 });
 
 gulp.task('compile-sass', function() {
@@ -36,13 +36,13 @@ gulp.task('compile-sass', function() {
     .pipe(rename(function(path) {
       path.extname = ".css"
     }))
-    .pipe(gulp.dest('.'))
+    .pipe(gulp.dest('./dist/css'))
     .pipe(browserSync.stream())
     .pipe(cleanCSS())
     .pipe(rename(function(path) {
       path.basename += ".min";
     }))
-    .pipe(gulp.dest('.'))
+    .pipe(gulp.dest('./dist/css'))
     .pipe(browserSync.stream());
 });
 
