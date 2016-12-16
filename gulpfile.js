@@ -59,7 +59,7 @@ gulp.task('serve', ['watch'], function() {
     }
   });
 
-  gulp.watch('./*.js').on('change', browserSync.reload);
+  gulp.watch('./dist/js/*.js').on('change', browserSync.reload);
   gulp.watch('./*.html').on('change', browserSync.reload);
 });
 
@@ -71,7 +71,7 @@ gulp.task('serve-gh-pages', ['watch'], function() {
     }
   });
 
-  gulp.watch('./*.js').on('change', browserSync.reload);
+  gulp.watch('./dist/js/*.js').on('change', browserSync.reload);
   gulp.watch('./*.html').on('change', browserSync.reload);
 });
 

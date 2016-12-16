@@ -16,7 +16,8 @@
   function AutomateForm(node) {
     var _self = this;
     _self.el = node;
-    _self.name = node.getAttribute('automate-form').split('.');
+    _self.name = node.getAttribute('automate-form-name') || node.getAttribute('af-name');
+    _self.name = _self.name.split('.');
     _self.instance = _self.name[0];
     _self.name = _self.name[1];
     _self.filesUploaded = false;
@@ -35,13 +36,17 @@
     }).success(function(form) {
       // console.log(form);
 
-      var submitGuid = newGuid();
-      var guidInput = document.createElement('input');
-      guidInput.setAttribute('type', 'hidden');
-      guidInput.setAttribute('name', '_submission_guid');
-      guidInput.value = submitGuid;
-      _self.el.appendChild(guidInput);
-      _self._submissionField = guidInput;
+      if (!!_self.el.querySelector('input[name="_submission_guid"]')) {
+        var submitGuid = newGuid();
+        var guidInput = document.createElement('input');
+        guidInput.setAttribute('type', 'hidden');
+        guidInput.setAttribute('name', '_submission_guid');
+        guidInput.value = submitGuid;
+        _self.el.appendChild(guidInput);
+        _self._submissionField = guidInput;
+      } else {
+        _self._submissionField = _self.el.querySelector('input[name="_submission_guid"]');
+      }
 
       if (form.fields && form.fields.length > 0) {
         for (var i = 0; i < form.fields.length; i++) {
@@ -63,81 +68,10 @@
       }
     });
 
-    _self.el.addEventListener('submit', function(e) { _self._onSubmit.call(_self, e); });
-  }
-
-  AutomateForm.prototype._onSubmit = function(e) {
-    if (e) {
-      e.preventDefault();
-    }
-    var _self = this;
-    _self.submitEl.setAttribute('disabled', '');
-
-    var _fileFields = {};
-    var _filesCount = 0;
-    for (field in _self.fields) {
-      if (_self.fields[field].type == "file" && _self.fields[field]._field.el.files.length > 0) {
-        _fileFields[_self.fields[field].key] = _self.fields[field];
-        _filesCount++;
-      }
-    }
-
-    console.log(_filesCount);
-
-    if (_filesCount > 0 && !_self.filesUploaded) {
-      console.log("there are files to submit!");
-      var formData = new FormData();
-      formData.set('_submission_guid', _self._submissionField.value);
-      for (field in _fileFields) {
-        var _field = _fileFields[field]._field.el;
-        for (var i = 0; i < _field.files.length; i++) {
-          console.log(_field.files[i]);
-          formData.append(field, _field.files[i], _field.files[i].name);
-        }
-      }
-      _self.submitFileRequest = ajax({
-        method: "POST",
-        url: _self.getFileUrl(),
-        data: formData
-      }).success(function(data) {
-        _self._appendResponse(data);
-        _self.filesUploaded = true;
-        _self._onSubmit();
-      });
-    } else {
-      console.log("There are no files to submit");
-      var formData = {};
-      formData._submission_guid = _self._submissionField.value;
-      for (fieldName in _self.fields) {
-        var field = _self.fields[fieldName];
-        formData[fieldName] = field._field.value;
-      }
-      _self.sumbitFormRequest = ajax({
-        method: "POST",
-        url: _self.getPostUrl(),
-        data: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).success(function(data) {
-        _self.submitEl.removeAttribute('disabled');
-        _self._appendResponse(data);
-        _self.filesUploaded = false;
-        _self._submissionField.value = newGuid();
-      });
-    }
   }
 
   AutomateForm.prototype.getUrlBase = function() {
     return "https://" + this.instance + ".nebrios.com";
-  }
-
-  AutomateForm.prototype.getPostUrl = function() {
-    return this.getUrlBase() + "/api/v1/forms/post_form";
-  }
-
-  AutomateForm.prototype.getFileUrl = function() {
-    return this.getUrlBase() + "/api/v1/forms/file_upload";
   }
 
   AutomateForm.prototype._appendResponse = function(json) {
@@ -165,7 +99,7 @@
   }
 
   /**
-   * Create the "AutomateForm" object if it already doesn't exist.
+   * Create the "AutomateForm" object on the window.
    */
   window.AutomateForm = AutomateForm;
 
@@ -174,14 +108,8 @@
    * match the provided selectors.
    */
   function onDocumentReady() {
-    var selectors = ["form[automate-form]"];
-    var formElements = [];
-    for (var i = 0; i < selectors.length; i++) {
-      var forms = document.querySelectorAll(selectors[i]);
-      if (forms) {
-        formElements = formElements.concat(Array.prototype.slice.call(forms));
-      }
-    }
+    var selectors = ["form[automate-form-name]", "form[af-name]"];
+    var formElements = document.querySelectorAll(selectors.join(", "));
 
     for (var i = 0; i < formElements.length; i++) {
       var form = new AutomateForm(formElements[i]);

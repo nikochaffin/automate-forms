@@ -44,33 +44,106 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(3);
+	module.exports = __webpack_require__(7);
 
 
 /***/ },
 /* 1 */,
 /* 2 */,
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	__webpack_require__(4);
+	function ajaxCall(config) {
+	  var _self = this;
+	  _self.method = config.method || "GET";
+	  _self.url = config.url;
+	  if (!_self.url) {
+	    console.warn("URL not specified");
+	  }
+
+	  _self._xhr = new XMLHttpRequest();
+	  _self._xhr.onload = function(e) {
+	    var data = e.target.responseText;
+	    try {
+	      data = JSON.parse(data);
+	    }
+	    catch(e) {
+	    }
+	    finally {
+	      if (_self._successCallback) {
+	        _self._successCallback.call({}, data);
+	      }
+	    }
+	  }
+
+	  _self._xhr.open(_self.method, _self.url);
+	  if (config.headers) {
+	    for (header in config.headers) {
+	      _self._xhr.setRequestHeader(header, config.headers[header]);
+	    }
+	  }
+	  if (config.data) {
+	    _self._xhr.send(config.data);
+	  } else {
+	    _self._xhr.send();
+	  }
+
+	  _self.success = function(cb) {
+	    _self._successCallback = cb;
+	  }
+
+	  return _self;
+	}
+
+	module.exports = ajaxCall;
 
 
 /***/ },
-/* 4 */
+/* 4 */,
+/* 5 */
+/***/ function(module, exports) {
+
+	/**
+	 * Generate new guid
+	 *
+	 * ripped off from http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+	 */
+	function newGuid() {
+	    var d = new Date().getTime();
+	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	        var r = (d + Math.random() * 16) % 16 | 0;
+	        d = Math.floor(d / 16);
+	        return (c == 'x' ? r : r & 3 | 8).toString(16);
+	    });
+	    return uuid;
+	}
+
+	module.exports = newGuid;
+
+
+/***/ },
+/* 6 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(8);
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function(window, document, undefined){
 
-	  var _s = __webpack_require__(5);
-	  var StringField = __webpack_require__(6);
-	  var IntegerField = __webpack_require__(9);
-	  var DecimalField = __webpack_require__(10);
-	  var BooleanField = __webpack_require__(11);
-	  var ChoiceField = __webpack_require__(13);
-	  var FileField = __webpack_require__(16);
-	  var ajax = __webpack_require__(17);
-	  var newGuid = __webpack_require__(18);
+	  var _s = __webpack_require__(9);
+	  var StringField = __webpack_require__(10);
+	  var IntegerField = __webpack_require__(13);
+	  var DecimalField = __webpack_require__(14);
+	  var BooleanField = __webpack_require__(15);
+	  var ChoiceField = __webpack_require__(17);
+	  var FileField = __webpack_require__(20);
+	  var ajax = __webpack_require__(3);
+	  var newGuid = __webpack_require__(5);
 
 	  /**
 	   * The constructor for the AutomateForm object
@@ -78,7 +151,8 @@
 	  function AutomateForm(node) {
 	    var _self = this;
 	    _self.el = node;
-	    _self.name = node.getAttribute('automate-form').split('.');
+	    _self.name = node.getAttribute('automate-form-name') || node.getAttribute('af-name');
+	    _self.name = _self.name.split('.');
 	    _self.instance = _self.name[0];
 	    _self.name = _self.name[1];
 	    _self.filesUploaded = false;
@@ -97,13 +171,17 @@
 	    }).success(function(form) {
 	      // console.log(form);
 
-	      var submitGuid = newGuid();
-	      var guidInput = document.createElement('input');
-	      guidInput.setAttribute('type', 'hidden');
-	      guidInput.setAttribute('name', '_submission_guid');
-	      guidInput.value = submitGuid;
-	      _self.el.appendChild(guidInput);
-	      _self._submissionField = guidInput;
+	      if (!!_self.el.querySelector('input[name="_submission_guid"]')) {
+	        var submitGuid = newGuid();
+	        var guidInput = document.createElement('input');
+	        guidInput.setAttribute('type', 'hidden');
+	        guidInput.setAttribute('name', '_submission_guid');
+	        guidInput.value = submitGuid;
+	        _self.el.appendChild(guidInput);
+	        _self._submissionField = guidInput;
+	      } else {
+	        _self._submissionField = _self.el.querySelector('input[name="_submission_guid"]');
+	      }
 
 	      if (form.fields && form.fields.length > 0) {
 	        for (var i = 0; i < form.fields.length; i++) {
@@ -125,81 +203,10 @@
 	      }
 	    });
 
-	    _self.el.addEventListener('submit', function(e) { _self._onSubmit.call(_self, e); });
-	  }
-
-	  AutomateForm.prototype._onSubmit = function(e) {
-	    if (e) {
-	      e.preventDefault();
-	    }
-	    var _self = this;
-	    _self.submitEl.setAttribute('disabled', '');
-
-	    var _fileFields = {};
-	    var _filesCount = 0;
-	    for (field in _self.fields) {
-	      if (_self.fields[field].type == "file" && _self.fields[field]._field.el.files.length > 0) {
-	        _fileFields[_self.fields[field].key] = _self.fields[field];
-	        _filesCount++;
-	      }
-	    }
-
-	    console.log(_filesCount);
-
-	    if (_filesCount > 0 && !_self.filesUploaded) {
-	      console.log("there are files to submit!");
-	      var formData = new FormData();
-	      formData.set('_submission_guid', _self._submissionField.value);
-	      for (field in _fileFields) {
-	        var _field = _fileFields[field]._field.el;
-	        for (var i = 0; i < _field.files.length; i++) {
-	          console.log(_field.files[i]);
-	          formData.append(field, _field.files[i], _field.files[i].name);
-	        }
-	      }
-	      _self.submitFileRequest = ajax({
-	        method: "POST",
-	        url: _self.getFileUrl(),
-	        data: formData
-	      }).success(function(data) {
-	        _self._appendResponse(data);
-	        _self.filesUploaded = true;
-	        _self._onSubmit();
-	      });
-	    } else {
-	      console.log("There are no files to submit");
-	      var formData = {};
-	      formData._submission_guid = _self._submissionField.value;
-	      for (fieldName in _self.fields) {
-	        var field = _self.fields[fieldName];
-	        formData[fieldName] = field._field.value;
-	      }
-	      _self.sumbitFormRequest = ajax({
-	        method: "POST",
-	        url: _self.getPostUrl(),
-	        data: JSON.stringify(formData),
-	        headers: {
-	          "Content-Type": "application/json"
-	        }
-	      }).success(function(data) {
-	        _self.submitEl.removeAttribute('disabled');
-	        _self._appendResponse(data);
-	        _self.filesUploaded = false;
-	        _self._submissionField.value = newGuid();
-	      });
-	    }
 	  }
 
 	  AutomateForm.prototype.getUrlBase = function() {
 	    return "https://" + this.instance + ".nebrios.com";
-	  }
-
-	  AutomateForm.prototype.getPostUrl = function() {
-	    return this.getUrlBase() + "/api/v1/forms/post_form";
-	  }
-
-	  AutomateForm.prototype.getFileUrl = function() {
-	    return this.getUrlBase() + "/api/v1/forms/file_upload";
 	  }
 
 	  AutomateForm.prototype._appendResponse = function(json) {
@@ -227,7 +234,7 @@
 	  }
 
 	  /**
-	   * Create the "AutomateForm" object if it already doesn't exist.
+	   * Create the "AutomateForm" object on the window.
 	   */
 	  window.AutomateForm = AutomateForm;
 
@@ -236,14 +243,8 @@
 	   * match the provided selectors.
 	   */
 	  function onDocumentReady() {
-	    var selectors = ["form[automate-form]"];
-	    var formElements = [];
-	    for (var i = 0; i < selectors.length; i++) {
-	      var forms = document.querySelectorAll(selectors[i]);
-	      if (forms) {
-	        formElements = formElements.concat(Array.prototype.slice.call(forms));
-	      }
-	    }
+	    var selectors = ["form[automate-form-name]", "form[af-name]"];
+	    var formElements = document.querySelectorAll(selectors.join(", "));
 
 	    for (var i = 0; i < formElements.length; i++) {
 	      var form = new AutomateForm(formElements[i]);
@@ -263,7 +264,7 @@
 
 
 /***/ },
-/* 5 */
+/* 9 */
 /***/ function(module, exports) {
 
 	var settings = {};
@@ -277,11 +278,11 @@
 
 
 /***/ },
-/* 6 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var TextInputField = __webpack_require__(7);
+	var _s = __webpack_require__(9);
+	var TextInputField = __webpack_require__(11);
 
 	StringField.prototype = Object.create(TextInputField.prototype);
 	StringField.prototype.constructor = StringField;
@@ -297,11 +298,11 @@
 
 
 /***/ },
-/* 7 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var Field = __webpack_require__(8);
+	var _s = __webpack_require__(9);
+	var Field = __webpack_require__(12);
 
 	TextInputField.prototype = Object.create(Field.prototype);
 	TextInputField.prototype.constructor = TextInputField;
@@ -376,10 +377,10 @@
 
 
 /***/ },
-/* 8 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
+	var _s = __webpack_require__(9);
 
 	function Field(config) {
 	  var _self = this;
@@ -445,11 +446,11 @@
 
 
 /***/ },
-/* 9 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var TextInputField = __webpack_require__(7);
+	var _s = __webpack_require__(9);
+	var TextInputField = __webpack_require__(11);
 
 	IntegerField.prototype = Object.create(TextInputField.prototype);
 	IntegerField.prototype.constructor = IntegerField;
@@ -470,11 +471,11 @@
 
 
 /***/ },
-/* 10 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var TextInputField = __webpack_require__(7);
+	var _s = __webpack_require__(9);
+	var TextInputField = __webpack_require__(11);
 
 	DecimalField.prototype = Object.create(TextInputField.prototype);
 	DecimalField.prototype.constructor = DecimalField;
@@ -502,11 +503,11 @@
 
 
 /***/ },
-/* 11 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var ControlField = __webpack_require__(12);
+	var _s = __webpack_require__(9);
+	var ControlField = __webpack_require__(16);
 
 	BooleanField.prototype = Object.create(ControlField.prototype);
 	BooleanField.prototype.constructor = BooleanField;
@@ -528,11 +529,11 @@
 
 
 /***/ },
-/* 12 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var Field = __webpack_require__(8);
+	var _s = __webpack_require__(9);
+	var Field = __webpack_require__(12);
 
 	ControlField.prototype = Object.create(Field.prototype);
 	ControlField.prototype.constructor = ControlField;
@@ -558,11 +559,11 @@
 
 
 /***/ },
-/* 13 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var MultiInputField = __webpack_require__(14);
+	var _s = __webpack_require__(9);
+	var MultiInputField = __webpack_require__(18);
 
 	ChoiceField.prototype = Object.create(MultiInputField.prototype);
 	ChoiceField.prototype.constructor = ChoiceField;
@@ -583,11 +584,11 @@
 
 
 /***/ },
-/* 14 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var RadioField = __webpack_require__(15);
+	var _s = __webpack_require__(9);
+	var RadioField = __webpack_require__(19);
 
 	function MultiInputField(config) {
 	  var _self = this;
@@ -634,11 +635,11 @@
 
 
 /***/ },
-/* 15 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var ControlField = __webpack_require__(12);
+	var _s = __webpack_require__(9);
+	var ControlField = __webpack_require__(16);
 
 	RadioField.prototype = Object.create(ControlField.prototype);
 	RadioField.prototype.constructor = RadioField;
@@ -656,11 +657,11 @@
 
 
 /***/ },
-/* 16 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _s = __webpack_require__(5);
-	var ControlField = __webpack_require__(12);
+	var _s = __webpack_require__(9);
+	var ControlField = __webpack_require__(16);
 
 	FileField.prototype = Object.create(ControlField.prototype);
 	FileField.prototype.constructor = FileField;
@@ -761,77 +762,6 @@
 	}
 
 	module.exports = FileField;
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	function ajaxCall(config) {
-	  var _self = this;
-	  _self.method = config.method || "GET";
-	  _self.url = config.url;
-	  if (!_self.url) {
-	    console.warn("URL not specified");
-	  }
-
-	  _self._xhr = new XMLHttpRequest();
-	  _self._xhr.onload = function(e) {
-	    var data = e.target.responseText;
-	    try {
-	      data = JSON.parse(data);
-	    }
-	    catch(e) {
-	    }
-	    finally {
-	      if (_self._successCallback) {
-	        _self._successCallback.call({}, data);
-	      }
-	    }
-	  }
-
-	  _self._xhr.open(_self.method, _self.url);
-	  if (config.headers) {
-	    for (header in config.headers) {
-	      _self._xhr.setRequestHeader(header, config.headers[header]);
-	    }
-	  }
-	  if (config.data) {
-	    _self._xhr.send(config.data);
-	  } else {
-	    _self._xhr.send();
-	  }
-
-	  _self.success = function(cb) {
-	    _self._successCallback = cb;
-	  }
-
-	  return _self;
-	}
-
-	module.exports = ajaxCall;
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	/**
-	 * Generate new guid
-	 *
-	 * ripped off from http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-	 */
-	function newGuid() {
-	    var d = new Date().getTime();
-	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-	        var r = (d + Math.random() * 16) % 16 | 0;
-	        d = Math.floor(d / 16);
-	        return (c == 'x' ? r : r & 3 | 8).toString(16);
-	    });
-	    return uuid;
-	}
-
-	module.exports = newGuid;
 
 
 /***/ }
