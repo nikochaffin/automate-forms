@@ -77,7 +77,7 @@
     } else {
       // console.log("There are no files to submit");
       var formData = new FormData(_self);
-      formData = formDataToObject(formData);
+      formData = formDataToObject(formData, _self);
       _self.sumbitFormRequest = ajax({
         method: "POST",
         url: _getPostUrl(_self),

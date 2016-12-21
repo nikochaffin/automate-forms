@@ -137,7 +137,7 @@
 	    } else {
 	      // console.log("There are no files to submit");
 	      var formData = new FormData(_self);
-	      formData = formDataToObject(formData);
+	      formData = formDataToObject(formData, _self);
 	      _self.sumbitFormRequest = ajax({
 	        method: "POST",
 	        url: _getPostUrl(_self),
@@ -272,13 +272,19 @@
 /* 6 */
 /***/ function(module, exports) {
 
-	function formDataToObject(data) {
+	function formDataToObject(data, form) {
 	  var output = {};
 	  var keysIterator = data.keys();
 	  var item = keysIterator.next();
 
 	  while (!item.done) {
-	    var val = data.get(item.value);
+	    var val;
+	    if (form) {
+	      var input = form.querySelector("input[name=\"" + item.value + "\"]");
+	      val = input.automateValue || input.afValue || input.value;
+	    } else {
+	      val = data.get(item.value);
+	    }
 	    if (typeof val != "object") {
 	      if (!!parseFloat(val) || parseFloat(val) == 0) {
 	        val = parseFloat(val);

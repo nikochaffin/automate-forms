@@ -14,7 +14,13 @@
   }
   </style>
   <h1>Demo of automate-forms</h1>
-  <p>The form below should be transformed into a masterpiece.</p>
+  <p>The form below should be transformed into a masterpiece via the magic of <code>automate-forms-generator.js</code>.</p>
   <form af-action="formtesting.forms.post_form" af-name="formtesting.foo"></form>
+  <hr>
+  <p>This form isn't auto-generated, but it still uses <code>automate-forms.js</code> to submit via AJAX.</p>
+  <form af-action="formtesting.forms.post_form">
+    <input name="full_name" placeholder="Full Name">
+    <input type="submit" value="Submit">
+  </form>
 </body>
 </html>
